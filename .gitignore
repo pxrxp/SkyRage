@@ -1,3 +1,12 @@
 .cache
-build/*
+build/
 imgui.ini
+bin/
+CMakeFiles/
+CMakeCache.txt
+vcpkg/
+vcpkg_installed/
+cmake_install.cmake
+Makefile
+compile_commands.json
+vcpkg-manifest-install.log

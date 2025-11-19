@@ -7,46 +7,21 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(SFML_BUILD_NETWORK "Build network" OFF)
-set(SFML_DIR "external/SFML")
-add_subdirectory(external/SFML)
+include("${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
-if(DEFINED DEV_PHASE)
-    set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/external/imgui)
-    option(IMGUI_SFML_FIND_SFML "Use find_package to find SFML" OFF)
-    option(IMGUI_SFML_IMGUI_DEMO "Build imgui_demo.cpp" ON)
-    option(IMGUI_SFML_DISABLE_OBSOLETE_FUNCTIONS "Disable obsolete ImGui functions" ON)
-    add_subdirectory(external/imgui-sfml)
-endif()
+find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(ImGui-SFML CONFIG REQUIRED)
 
 file(COPY ${PROJECT_SOURCE_DIR}/assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
 file(GLOB_RECURSE SOURCES "src/*.cpp") 
+
 add_executable(${PROJECT_NAME} ${SOURCES}) 
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-    external/SFML/include
-    include
-)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    sfml-system
-    sfml-graphics
-    sfml-window
-    sfml-audio
-)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System)
 
 if(DEFINED DEV_PHASE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DEV_PHASE=${DEV_PHASE})
-
-    target_include_directories(${PROJECT_NAME} PRIVATE
-        ${IMGUI_DIR}
-        external/imgui-sfml
-    )
-
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        ImGui-SFML
-    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui ImGui-SFML::ImGui-SFML)
 endif()
