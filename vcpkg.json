@@ -1,9 +1,0 @@
-{
-  "name": "revved-up",
-  "version": "0.1.0",
-  "dependencies": [
-    "imgui-sfml",
-    "sfml",
-    "imgui"
-  ]
-}

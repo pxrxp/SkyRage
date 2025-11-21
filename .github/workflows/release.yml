@@ -1,0 +1,33 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t sfml-app .
+
+      - name: Extract application binary
+        run: |
+          container_id=$(docker create sfml-app)
+          docker cp $container_id:/workspace/build/app ./app
+          docker rm $container_id
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
