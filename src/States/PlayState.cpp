@@ -13,18 +13,11 @@
 #include <functional>
 #include <memory>
 
-namespace {
-float DISTANCE_TO_WIN = 1000;
-float DISTANCE_CONST = 100;
-float GHOST_ABOVE_THRESHOLD = 0.6f;
-}
-
 PlayState::PlayState()
   : State(StateID::Play)
   , car()
   , background()
   , distanceCovered(0.0f)
-  , ghostSpawner(0.1f, 0.9f, 0.6f)
 {
     gameClock.restart();
 
@@ -56,8 +49,6 @@ PlayState::init()
                                Util::getExecutablePath() / "assets/atlas1.png");
     textureManager.loadTexture(TextureID::ATLAS2,
                                Util::getExecutablePath() / "assets/atlas2.png");
-    textureManager.loadTexture(TextureID::GHOST,
-                               Util::getExecutablePath() / "assets/ghost.png");
     textureManager.loadTexture(TextureID::CAR0,
                                Util::getExecutablePath() / "assets/car0.png");
 
@@ -130,51 +121,10 @@ PlayState::update(const sf::Time& deltaTime)
 {
     car.update(deltaTime);
     background.update(deltaTime, car);
-    ghostSpawner.update(
-      deltaTime, car.getPositionPercentage(), car.getWidthPercentage());
-
-    bool ghostDetected = false;
-
-    for (const auto& ghost : ghostSpawner.getGhosts()) {
-        sf::Vector2f ghostPosition = ghost->getPositionPercentage();
-        sf::Vector2f carPosition = car.getPositionPercentage();
-
-        if (ghostPosition.x >= carPosition.x - car.getWidthPercentage() / 6 &&
-            ghostPosition.x <= carPosition.x + car.getWidthPercentage() / 6 &&
-            ghostPosition.y < carPosition.y) {
-            ghostDetected = true;
-            break;
-        }
-    }
-
-    if (ghostDetected) {
-        if (!isGhostAbove) {
-            isGhostAbove = true;
-            ghostAboveTimer.restart();
-        } else if (ghostAboveTimer.getElapsedTime().asSeconds() >=
-                   GHOST_ABOVE_THRESHOLD) {
-            car.setVelocity(-3 * car.getForwardVelocity());
-        }
-    } else {
-        isGhostAbove = false;
-    }
 
     sf::Time elapsedTime = gameClock.getElapsedTime();
     int minutes = static_cast<int>(elapsedTime.asSeconds()) / 60;
     int seconds = static_cast<int>(elapsedTime.asSeconds()) % 60;
-
-    float sign;
-    if (car.getForwardVelocity() > 0) sign = +1;
-    if (car.getForwardVelocity() < 0) sign = -3;
-    if (car.getForwardVelocity() == 0) sign = 0;
-    distanceCovered += sign * 
-      deltaTime.asSeconds() * DISTANCE_CONST;
-
-    if (distanceCovered >= DISTANCE_TO_WIN) {
-        snapshot(TextureManager::getInstance().getRenderTexture());
-        StateManager::getInstance().pushState(
-          std::make_unique<GameOverState>());
-    }
 
     timeText.setString("Time: " + std::to_string(minutes) + ":" +
                        std::to_string(seconds));
@@ -188,10 +138,6 @@ PlayState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(car);
-
-    for (const auto& ghost : ghostSpawner.getGhosts()) {
-        target.draw(*ghost);
-    }
 
     target.draw(timeText);
     target.draw(distanceText);

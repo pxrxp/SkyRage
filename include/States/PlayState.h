@@ -2,7 +2,6 @@
 #define PLAY_STATE_H
 
 #include "Components/Background.h"
-#include "Components/GhostSpawner.h"
 #include "Components/PlayerCar.h"
 #include "Core/IState.h"
 #include <SFML/Audio.hpp>
@@ -12,14 +11,11 @@ class PlayState : public State
   private:
     PlayerCar car;
     Background background;
-    GhostSpawner ghostSpawner;
 
     float distanceCovered;
     sf::Text timeText;
     sf::Text distanceText;
     sf::Clock gameClock;
-    sf::Clock ghostAboveTimer;
-    bool isGhostAbove = false;
 
   public:
     PlayState();
