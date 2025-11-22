@@ -35,20 +35,17 @@ Background::update(const sf::Time& deltaTime, const PlayerCar& car)
 
     auto& atlas = atlases.at(static_cast<std::size_t>(currentTexture));
 
-    if (!car.getForwardVelocity() || !atlas.frameDurationConstant)
+    if (!car.getVelocity() || !atlas.frameDurationConstant)
         return;
 
     auto frameDuration =
-      atlas.frameDurationConstant / std::abs(car.getForwardVelocity());
+      atlas.frameDurationConstant / std::abs(car.getVelocity());
 
     if (currentTime < frameDuration)
         return;
     currentTime -= frameDuration;
 
-    if (car.getForwardVelocity() > 0)
-        incrementFrame();
-    else if (car.getForwardVelocity() < 0)
-        decrementFrame();
+    incrementFrame();
 
     sprite.setTextureRect(sf::IntRect(currentCol * atlas.tileWidth,
                                       currentRow * atlas.tileHeight,

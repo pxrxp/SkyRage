@@ -1,31 +1,26 @@
 #include "Components/PlayerCar.h"
 #include "Core/TextureManager.h"
 #include "Core/WindowManager.h"
-#include <algorithm>
+#include "States/SettingsState.h"
 
 namespace {
-static float FORWARD_INCREMENT = 0.1f;
-static float BACKWARD_DECREMENT = 0.1f;
-static float SIDE_INCREMENT = 0.1f;
-static float SIDE_SPEED_MULTIPLIER_CONST = 5.0f;
-
-static float DAMPING = 0.03f;
-static float MAX_DAMPING = 1.0f;
-static float MAX_VELOCITY = 5.0f;
+static float SIDE_INCREMENT = 1.0f;
+static float SIDE_SPEED_MULTIPLIER_CONST = 0.5f;
 
 static float INITIAL_POSITION_X = 0.5f;
-static float INITIAL_POSITION_Y = 0.9f;
-static float INITIAL_SCALE_X = 0.2f;
-static float INITIAL_SCALE_Y = 0.2f;
+static float INITIAL_POSITION_Y = 0.8f;
+static float INITIAL_SCALE_X = 0.05f;
+static float INITIAL_SCALE_Y = 0.05f;
+
+static float TRANSITION_DURATION = 30.0f;
 }
 
 PlayerCar::PlayerCar()
-  : forwardMovement(false)
-  , backwardMovement(false)
-  , leftMovement(false)
+  : leftMovement(false)
   , rightMovement(false)
   , forwardVelocity(0.0f)
-  , positionPercentage(sf::Vector2f(INITIAL_POSITION_X, INITIAL_POSITION_Y))
+  , targetVelocity(0.0f)
+  , positionN(sf::Vector2f(INITIAL_POSITION_X, INITIAL_POSITION_Y))
 {
 }
 
@@ -42,28 +37,28 @@ PlayerCar::resizeWithWindow(float newWindowWidth,
 }
 
 float
-PlayerCar::getForwardVelocity() const
+PlayerCar::getVelocity() const
 {
     return forwardVelocity;
 }
 void
-PlayerCar::setVelocity(float velocity)
+PlayerCar::setTargetVelocity(float velocity)
 {
-    forwardVelocity = velocity;
+    targetVelocity = velocity;
 }
 
 sf::Vector2f
-PlayerCar::getPositionPercentage() const
+PlayerCar::getPositionN() const
 {
-    return positionPercentage;
+    return positionN;
 }
 
 void
 PlayerCar::handleEvents(const sf::Event& event)
 {
     if (event.type == sf::Event::Resized) {
-        sprite.setPosition(positionPercentage.x * event.size.width,
-                           positionPercentage.y * event.size.height);
+        sprite.setPosition(positionN.x * event.size.width,
+                           positionN.y * event.size.height);
         resizeWithWindow(event.size.width,
                          event.size.height,
                          INITIAL_SCALE_X,
@@ -71,14 +66,6 @@ PlayerCar::handleEvents(const sf::Event& event)
     }
 
     bool pressed = event.type != sf::Event::KeyReleased;
-    forwardMovement =
-      (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
-        ? pressed
-        : forwardMovement;
-    backwardMovement = (event.key.code == sf::Keyboard::S ||
-                        event.key.code == sf::Keyboard::Down)
-                         ? pressed
-                         : backwardMovement;
     leftMovement = (event.key.code == sf::Keyboard::A ||
                     event.key.code == sf::Keyboard::Left)
                      ? pressed
@@ -99,13 +86,17 @@ PlayerCar::init()
                       sprite.getTextureRect().getSize().x,
                     INITIAL_SCALE_Y * static_cast<float>(window.getSize().y) /
                       sprite.getTextureRect().getSize().y);
+
     auto spriteBounds = sprite.getLocalBounds();
     sprite.setOrigin(spriteBounds.width / 2, spriteBounds.height);
-    positionPercentage = sf::Vector2f(INITIAL_POSITION_X, INITIAL_POSITION_Y);
+    positionN = sf::Vector2f(INITIAL_POSITION_X, INITIAL_POSITION_Y);
 
-    float x = positionPercentage.x * window.getSize().x;
-    float y = positionPercentage.y * window.getSize().y;
+    float x = positionN.x * window.getSize().x;
+    float y = positionN.y * window.getSize().y;
     sprite.setPosition(x, y);
+
+    setTargetVelocity(1.0f);
+    setMovementBoundaryN(0.4, 0.6);
 }
 
 void
@@ -118,62 +109,38 @@ PlayerCar::update(const sf::Time& deltaTime)
 void
 PlayerCar::updateVelocity(const sf::Time& deltaTime)
 {
-    if (forwardMovement)
-        forwardVelocity =
-          std::min(forwardVelocity + FORWARD_INCREMENT, MAX_VELOCITY);
-    if (backwardMovement)
-        forwardVelocity =
-          std::max(forwardVelocity - BACKWARD_DECREMENT, -MAX_VELOCITY);
-    if (!forwardMovement && !backwardMovement)
-        forwardVelocity *= (1.0f - DAMPING);
+    float velocityStep = targetVelocity - forwardVelocity;
+    forwardVelocity +=
+      velocityStep * deltaTime.asSeconds() / TRANSITION_DURATION;
 }
 
 void
 PlayerCar::updatePosition(const sf::Time& deltaTime)
 {
     auto windowSize = WindowManager::getWindow().getSize();
+    float map = SettingsState::readCurrentMap();
 
     float dt = deltaTime.asSeconds();
-    float xOffset = (rightMovement ? SIDE_INCREMENT : 0) -
-                    (leftMovement ? SIDE_INCREMENT : 0);
+    float direction = (rightMovement ? SIDE_INCREMENT : 0) -
+                      (leftMovement ? SIDE_INCREMENT : 0);
     float speedMultiplier =
       static_cast<float>(windowSize.x) * SIDE_SPEED_MULTIPLIER_CONST;
 
-    sprite.move(xOffset * speedMultiplier * dt, 0.0f);
+    auto next_pos = sprite.getPosition() +
+                    sf::Vector2f(direction * speedMultiplier * dt, 0.0f);
 
-    sf::FloatRect windowBounds(0, 0, windowSize.x, windowSize.y);
-    if (intersectsBoundaries(windowBounds)) {
-        float x = positionPercentage.x * windowSize.x;
-        float y = positionPercentage.y * windowSize.y;
-        sprite.setPosition(x, y);
-    }
-
-    positionPercentage.x = sprite.getPosition().x / windowSize.x;
-    positionPercentage.y = sprite.getPosition().y / windowSize.y;
-
-    float x = positionPercentage.x * windowSize.x;
-    float y = positionPercentage.y * windowSize.y;
-    sprite.setPosition(x, y);
+    if (next_pos.x > minXN * windowSize.x && next_pos.x < maxXN * windowSize.x)
+        sprite.setPosition(next_pos);
 }
 
 bool
-PlayerCar::intersectsBoundaries(const sf::FloatRect& boundary)
+PlayerCar::intersectsBoundary(const sf::FloatRect& boundary)
 {
-    auto spriteBounds = sprite.getGlobalBounds();
-
-    auto boundaryLeft = sf::FloatRect(0, 0, 1, boundary.getSize().y);
-    auto boundaryRight =
-      sf::FloatRect(boundary.getSize().x - 1, 0, 1, boundary.getSize().y);
-
-    if (boundaryLeft.intersects(spriteBounds) ||
-        boundaryRight.intersects(spriteBounds)) {
-        return true;
-    }
-    return false;
+    return boundary.intersects(sprite.getGlobalBounds());
 }
 
 float
-PlayerCar::getWidthPercentage() const
+PlayerCar::getWidthN() const
 {
     auto globalBounds = sprite.getGlobalBounds();
     return globalBounds.width / WindowManager::getWindow().getSize().x;
@@ -183,4 +150,26 @@ void
 PlayerCar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(sprite);
+}
+
+void
+PlayerCar::setSpritePositionN(sf::Vector2f position)
+{
+    auto windowSize = WindowManager::getWindow().getSize();
+    sprite.setPosition(
+      { windowSize.x * position.x, windowSize.y * position.y });
+}
+
+void
+PlayerCar::setSpriteScaleN(sf::Vector2f scale)
+{
+    auto windowSize = WindowManager::getWindow().getSize();
+    sprite.setScale({ scale.x / windowSize.x, scale.y / windowSize.y });
+}
+
+void
+PlayerCar::setMovementBoundaryN(float minXN, float maxXN)
+{
+    this->minXN = minXN;
+    this->maxXN = maxXN;
 }

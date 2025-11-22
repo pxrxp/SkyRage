@@ -6,19 +6,22 @@
 class PlayerCar : public sf::Drawable
 {
   private:
-    bool forwardMovement;
-    bool backwardMovement;
     bool leftMovement;
     bool rightMovement;
 
     sf::Sprite sprite;
+    sf::Vector2f positionN;
+
     float forwardVelocity;
-    sf::Vector2f positionPercentage;
+    float targetVelocity;
 
-    void updateVelocity(const sf::Time& deltaTime);
+    float minXN;
+    float maxXN;
+
     void updatePosition(const sf::Time& deltaTime);
+    void updateVelocity(const sf::Time& deltaTime);
 
-    bool intersectsBoundaries(const sf::FloatRect& boundary);
+    bool intersectsBoundary(const sf::FloatRect& boundary);
 
     virtual void draw(sf::RenderTarget& target,
                       sf::RenderStates states) const override;
@@ -35,10 +38,16 @@ class PlayerCar : public sf::Drawable
     void update(const sf::Time& deltaTime);
     void handleEvents(const sf::Event& event);
 
-    float getForwardVelocity() const;
-    sf::Vector2f getPositionPercentage() const;
-    float getWidthPercentage() const;
+    sf::Vector2f getPositionN() const;
+    float getWidthN() const;
+
+    float getVelocity() const;
     void setVelocity(float velocity);
+    void setTargetVelocity(float velocity);
+
+    void setSpritePositionN(sf::Vector2f position);
+    void setSpriteScaleN(sf::Vector2f position);
+    void setMovementBoundaryN(float minX, float maxX);
 };
 
 #endif // PLAYER_CAR_H

@@ -24,14 +24,14 @@ PlayState::PlayState()
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
     timeText.setFont(textFont);
-    timeText.setCharacterSize(20);
+    timeText.setCharacterSize(30);
     timeText.setFillColor(sf::Color::White);
     sf::Vector2u windowSize = WindowManager::getWindow().getSize();
     timeText.setPosition(0.05f * windowSize.x,
-                         0.05f * windowSize.y); // 5% padding from top left
+                         0.05f * windowSize.y);
 
     distanceText.setFont(textFont);
-    distanceText.setCharacterSize(20);
+    distanceText.setCharacterSize(30);
     distanceText.setFillColor(sf::Color::White);
     distanceText.setPosition(0.05f * windowSize.x, 0.1f * windowSize.y);
 }
@@ -128,7 +128,8 @@ PlayState::update(const sf::Time& deltaTime)
 
     timeText.setString("Time: " + std::to_string(minutes) + ":" +
                        std::to_string(seconds));
-    float remainingDistance = DISTANCE_TO_WIN - distanceCovered;
+
+    float remainingDistance = distanceCovered;
     distanceText.setString(
       "Distance Remaining: " + std::to_string(static_cast<int>(remainingDistance)) + " m");
 }
