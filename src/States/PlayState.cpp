@@ -322,8 +322,9 @@ PlayState::exit()
     eventManager.removeAllListeners(StateID::Play, sf::Event::Closed);
 
     if (distanceCovered <= 0.0f) {
-        std::ofstream file(Util::getExecutablePath() / "highscores.txt",
-                           std::ios::app);
+        std::ofstream file(
+          (Util::getExecutablePath() / "highscores.txt").string(),
+          std::ios::app);
         if (file.is_open()) {
             int minutes = static_cast<int>(playingTime) / 60;
             int seconds = static_cast<int>(playingTime) % 60;
