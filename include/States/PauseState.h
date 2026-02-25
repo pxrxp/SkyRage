@@ -21,4 +21,4 @@ class PauseState : public State
     void exit() override;
 };
 
-#endif // PAUSESTATE_H
+#endif  

@@ -24,4 +24,4 @@ class WinState : public State
     void exit() override;
 };
 
-#endif // WINSTATE_H
+#endif  

@@ -27,12 +27,12 @@ Background::init()
 }
 
 void
-Background::update(const sf::Time& deltaTime, const PlayerCar& car)
+Background::update(const sf::Time& deltaTime, const PlayerPlane& plane)
 {
     float dt = deltaTime.asSeconds();
 
-    // Scroll background downwards to simulate forward flight
-    scrollOffset -= (car.getVelocity() * 160.0f + scrollSpeed) * dt;
+     
+    scrollOffset -= (plane.getVelocity() * 160.0f + scrollSpeed) * dt;
 
     auto texSize = sprite.getTexture()->getSize();
     if (scrollOffset < 0.0f) {
@@ -95,7 +95,7 @@ Background::changeAtlas(TextureID textureID)
     auto& texManager = TextureManager::getInstance();
     auto& tex = texManager.getTexture(textureID);
     const_cast<sf::Texture&>(tex).setRepeated(
-      true); // Enable repeating for scrolling
+      true);  
     sprite.setTexture(tex);
 
     auto windowSize = WindowManager::getWindow().getSize();

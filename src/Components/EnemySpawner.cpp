@@ -27,8 +27,8 @@ EnemyPlane::EnemyPlane(float x, float y)
 sf::FloatRect
 EnemyPlane::getBounds() const
 {
-    // Return a tightened bounding box (70% of original) for fairer collision
-    // detection
+     
+     
     auto bounds = sprite.getGlobalBounds();
     float shrinkFactor = 0.7f;
     float newWidth = bounds.width * shrinkFactor;
@@ -46,7 +46,7 @@ EnemyPlane::update(const sf::Time& deltaTime, float playerVelocity)
     auto position = sprite.getPosition();
     auto& window = WindowManager::getWindow();
 
-    // Base enemy speed + scale with player velocity
+     
     float baseEnemySpeed = window.getSize().y * 0.3f;
     float relativeSpeed = playerVelocity * window.getSize().y * 0.5f;
     float totalSpeed = baseEnemySpeed + relativeSpeed;
@@ -89,17 +89,17 @@ EnemySpawner::EnemySpawner(float minX, float maxX, float fixedY)
 
 void
 EnemySpawner::update(const sf::Time& deltaTime,
-                     const sf::Vector2f& carPosition,
-                     const float carWidthPercentage,
-                     float carVelocity)
+                     const sf::Vector2f& planePosition,
+                     const float planeWidthPercentage,
+                     float planeVelocity)
 {
     if (spawnClock.getElapsedTime().asSeconds() >= spawnInterval) {
-        spawnEnemy(carPosition, carWidthPercentage);
+        spawnEnemy(planePosition, planeWidthPercentage);
         spawnClock.restart();
     }
 
     for (auto it = enemies.begin(); it != enemies.end();) {
-        (*it)->update(deltaTime, carVelocity);
+        (*it)->update(deltaTime, planeVelocity);
         if ((*it)->getPositionPercentage().y > 1.2f) {
             it = enemies.erase(it);
         } else {

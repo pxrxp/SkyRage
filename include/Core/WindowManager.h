@@ -14,6 +14,6 @@ toggleFullScreen(const sf::Event& event);
 void
 resizeWindow(const sf::Event& event);
 
-} // namespace WindowManager
+}  
 
-#endif // WINDOW_MANAGER_H
+#endif  

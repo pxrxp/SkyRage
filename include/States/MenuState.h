@@ -30,4 +30,4 @@ class MenuState : public State
     int selectedButtonIndex;
 };
 
-#endif // MENUSTATE_H
+#endif  

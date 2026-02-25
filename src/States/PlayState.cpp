@@ -9,6 +9,8 @@
 #include "States/PauseState.h"
 #include "States/WinState.h"
 #include "Util/Path.h"
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/SoundStream.hpp>
 #include <cmath>
 #include <fstream>
 #include <functional>
@@ -16,15 +18,15 @@
 
 PlayState::PlayState()
   : State(StateID::Play)
-  , car()
+  , plane()
   , background()
   , enemySpawner(0.2f, 0.8f, WindowManager::getWindow().getSize().y * 1.1f)
   , gameStarted(false)
   , countdownTimer(3.5f)
   , playingTime(0.0f)
-  , distanceCovered(10000.0f)
+  , distanceCovered(100000.0f)
   , gameEnded(false)
-  , maxDistance(10000.0f)
+  , maxDistance(1000000.0f)
 {
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
@@ -32,19 +34,19 @@ PlayState::PlayState()
 
     timeText.setFont(textFont);
     timeText.setCharacterSize(30);
-    timeText.setFillColor(sf::Color(120, 120, 120)); // Darkened
+    timeText.setFillColor(sf::Color(120, 120, 120));  
     timeText.setOutlineThickness(1);
     timeText.setOutlineColor(sf::Color::Black);
     timeText.setPosition(0.05f * windowSize.x, 0.05f * windowSize.y);
 
     distanceText.setFont(textFont);
     distanceText.setCharacterSize(30);
-    distanceText.setFillColor(sf::Color(80, 90, 100)); // Darkened
+    distanceText.setFillColor(sf::Color(80, 90, 100));  
     distanceText.setOutlineThickness(1);
     distanceText.setOutlineColor(sf::Color::Black);
     distanceText.setPosition(0.05f * windowSize.x, 0.09f * windowSize.y);
 
-    // Progress Bar
+     
     progressBarBackground.setSize(sf::Vector2f(windowSize.x * 0.4f, 10));
     progressBarBackground.setFillColor(sf::Color(20, 20, 20, 200));
     progressBarBackground.setOutlineThickness(1);
@@ -59,12 +61,12 @@ PlayState::PlayState()
     progressBarFill.setPosition(windowSize.x * 0.3f, 0.05f * windowSize.y);
     progressBarFill.setOrigin(0, progressBarFill.getSize().y / 2.0f);
 
-    // Countdown Text
+     
     countdownText.setFont(font);
     countdownText.setCharacterSize(180);
     countdownText.setFillColor(sf::Color::White);
     countdownText.setOutlineThickness(2);
-    countdownText.setOutlineColor(sf::Color(80, 90, 100)); // Darkened
+    countdownText.setOutlineColor(sf::Color(80, 90, 100));  
     countdownText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 100);
 }
 
@@ -102,10 +104,11 @@ PlayState::init()
     soundManager.loadSound(SoundID::CRASH,
                            Util::getExecutablePath() / "assets/crash.ogg");
 
-    if (soundManager.getMusic().openFromFile(
+    auto& music = soundManager.getMusic();
+    if (music.openFromFile(
           (Util::getExecutablePath() / "assets/music.ogg").string())) {
-        soundManager.getMusic().setLoop(true);
-        soundManager.getMusic().setVolume(20);
+        music.setLoop(true);
+        music.setVolume(20);
     }
 
     eventManager.addListener(
@@ -131,17 +134,17 @@ PlayState::init()
     eventManager.addListener(
       StateID::Play,
       sf::Event::KeyPressed,
-      std::bind(&PlayerCar::handleEvents, &car, std::placeholders::_1));
+      std::bind(&PlayerPlane::handleEvents, &plane, std::placeholders::_1));
 
     eventManager.addListener(
       StateID::Play,
       sf::Event::KeyReleased,
-      std::bind(&PlayerCar::handleEvents, &car, std::placeholders::_1));
+      std::bind(&PlayerPlane::handleEvents, &plane, std::placeholders::_1));
 
     eventManager.addListener(
       StateID::Play,
       sf::Event::Resized,
-      std::bind(&PlayerCar::handleEvents, &car, std::placeholders::_1));
+      std::bind(&PlayerPlane::handleEvents, &plane, std::placeholders::_1));
 
     eventManager.addListener(
       StateID::Play,
@@ -149,7 +152,7 @@ PlayState::init()
       std::bind(&Background::handleEvents, &background, std::placeholders::_1));
 
     background.init();
-    car.init();
+    plane.init();
 
     playingTime = 0.0f;
     countdownTimer = 3.5f;
@@ -204,16 +207,16 @@ PlayState::update(const sf::Time& deltaTime)
     if (gameEnded)
         return;
 
-    car.update(deltaTime);
-    background.update(deltaTime, car);
+    plane.update(deltaTime);
+    background.update(deltaTime, plane);
 
-    // The visual car width is a percentage of the screen width to detect
-    // collisions against
-    float carWidth = car.getWidthN();
+     
+     
+    float planeWidth = plane.getWidthN();
     enemySpawner.update(
-      deltaTime, car.getPositionN(), carWidth, car.getVelocity());
+      deltaTime, plane.getPositionN(), planeWidth, plane.getVelocity());
 
-    // Timer updates
+     
     playingTime += dt;
     int minutes = static_cast<int>(playingTime) / 60;
     int seconds = static_cast<int>(playingTime) % 60;
@@ -221,9 +224,9 @@ PlayState::update(const sf::Time& deltaTime)
     timeText.setString("Time: " + std::to_string(minutes) + ":" +
                        (seconds < 10 ? "0" : "") + std::to_string(seconds));
 
-    // Distance updates - 10,000 meters remaining
-    float speedMultiplier = 200.0f; // Faster drain to match intensity
-    distanceCovered -= car.getVelocity() * dt * speedMultiplier;
+     
+    float speedMultiplier = 200.0f;  
+    distanceCovered -= plane.getVelocity() * dt * speedMultiplier;
 
     if (distanceCovered <= 0.0f) {
         distanceCovered = 0.0f;
@@ -232,15 +235,15 @@ PlayState::update(const sf::Time& deltaTime)
     distanceText.setString(
       "Distance: " + std::to_string(static_cast<int>(distanceCovered)) + "m");
 
-    // Update Progress Bar
+     
     float progress = 1.0f - (distanceCovered / maxDistance);
     progressBarFill.setSize(
       sf::Vector2f(progressBarBackground.getSize().x * progress, 10));
 
-    // Collision check
-    auto carBounds = car.getBounds();
+     
+    auto planeBounds = plane.getBounds();
     for (auto& enemy : enemySpawner.getEnemies()) {
-        if (carBounds.intersects(enemy->getBounds())) {
+        if (planeBounds.intersects(enemy->getBounds())) {
             gameEnded = true;
             SoundManager::getInstance().getMusic().stop();
             SoundManager::getInstance().playSound(SoundID::CRASH);
@@ -252,7 +255,7 @@ PlayState::update(const sf::Time& deltaTime)
         }
     }
 
-    // Win condition
+     
     if (distanceCovered <= 0.0f) {
         gameEnded = true;
         SoundManager::getInstance().getMusic().stop();
@@ -271,7 +274,7 @@ PlayState::render(sf::RenderTarget& target)
         target.draw(*enemy);
     }
 
-    target.draw(car);
+    target.draw(plane);
 
     target.draw(timeText);
     target.draw(distanceText);

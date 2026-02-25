@@ -11,13 +11,17 @@ sf::RenderWindow&
 WindowManager::getWindow()
 {
     static sf::RenderWindow window(sf::VideoMode::getDesktopMode(), TITLE);
+    static bool initialized = false;
 
-    sf::Image icon;
-    icon.loadFromFile(ICON_PATH);
+    if (!initialized) {
+        sf::Image icon;
+        icon.loadFromFile(ICON_PATH);
 
-    window.setKeyRepeatEnabled(false);
-    window.setVerticalSyncEnabled(true);
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+        window.setKeyRepeatEnabled(false);
+        window.setVerticalSyncEnabled(true);
+        window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+        initialized = true;
+    }
 
     return window;
 }

@@ -27,4 +27,4 @@ class FontManager
     static FontManager& getInstance();
 };
 
-#endif // FONT_MANAGER_H
+#endif  

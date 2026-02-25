@@ -20,4 +20,4 @@ class HowToPlayState : public State
     sf::Text instructionsText;
 };
 
-#endif // HOWTOPLAYSTATE_H
+#endif  

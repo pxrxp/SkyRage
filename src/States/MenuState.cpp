@@ -18,7 +18,7 @@
 MenuState::MenuState()
   : State(StateID::Menu)
   , defaultColor(sf::Color(180, 180, 180))
-  , hoverColor(sf::Color(70, 80, 95)) // Darker Slate
+  , hoverColor(sf::Color(70, 80, 95))  
   , selectedButtonIndex(0)
 {
 }
@@ -65,7 +65,7 @@ MenuState::init()
     title.setOrigin(title.getLocalBounds().width / 2.0f,
                     title.getLocalBounds().height / 2.0f);
 
-    // Create Glow Layers
+     
     for (int i = 0; i < 4; ++i) {
         sf::Text glowText = title;
         glowText.setFillColor(sf::Color(70, 80, 95, 30));
@@ -130,7 +130,7 @@ MenuState::update(const sf::Time& deltaTime)
     auto mousePos = sf::Mouse::getPosition(WindowManager::getWindow());
     updateButtonStates(static_cast<sf::Vector2f>(mousePos));
 
-    // Animate Glow
+     
     float time = static_cast<float>(std::clock()) / CLOCKS_PER_SEC;
     for (size_t i = 0; i < titleGlowLayers.size(); ++i) {
         float offset = (i + 1) * 2.0f * std::sin(time * 3.0f + i);

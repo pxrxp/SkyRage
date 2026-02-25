@@ -27,4 +27,4 @@ class HighScoresState : public State
     std::vector<std::string> highScores;
 };
 
-#endif // HIGHSCORESSTATE_H
+#endif  

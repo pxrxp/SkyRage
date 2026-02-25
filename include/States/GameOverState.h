@@ -26,4 +26,4 @@ class GameOverState : public State
     void exit() override;
 };
 
-#endif // GAMEOVERSTATE_H
+#endif  

@@ -35,4 +35,4 @@ class TextureManager
     static TextureManager& getInstance();
 };
 
-#endif // TEXTURE_MANAGER_H
+#endif  

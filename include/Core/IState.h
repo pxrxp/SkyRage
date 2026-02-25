@@ -26,4 +26,4 @@ class State
     virtual void exit() = 0;
 };
 
-#endif // STATE_H
+#endif  

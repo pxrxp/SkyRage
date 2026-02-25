@@ -22,7 +22,7 @@ WinState::init()
     soundManager.getMusic().stop();
 
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
-    overlay.setFillColor(sf::Color(20, 30, 40, 200)); // Muted bluish overlay
+    overlay.setFillColor(sf::Color(20, 30, 40, 200));  
 
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);

@@ -24,11 +24,11 @@ class EnemySpawner
   public:
     EnemySpawner(float minX, float maxX, float fixedY);
     void update(const sf::Time& deltaTime,
-                const sf::Vector2f& carPosition,
-                const float carWidthPercentage,
-                float carVelocity);
-    void spawnEnemy(const sf::Vector2f& carPosition,
-                    const float carWidthPercentage);
+                const sf::Vector2f& planePosition,
+                const float planeWidthPercentage,
+                float planeVelocity);
+    void spawnEnemy(const sf::Vector2f& planePosition,
+                    const float planeWidthPercentage);
     const std::deque<std::unique_ptr<EnemyPlane>>& getEnemies() const;
 
   private:
@@ -40,4 +40,4 @@ class EnemySpawner
     float spawnInterval;
 };
 
-#endif // ENEMYSPAWNER_H
+#endif  

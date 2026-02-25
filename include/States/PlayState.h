@@ -3,14 +3,14 @@
 
 #include "Components/Background.h"
 #include "Components/EnemySpawner.h"
-#include "Components/PlayerCar.h"
+#include "Components/PlayerPlane.h"
 #include "Core/IState.h"
 #include <SFML/Audio.hpp>
 
 class PlayState : public State
 {
   private:
-    PlayerCar car;
+    PlayerPlane plane;
     Background background;
     EnemySpawner enemySpawner;
     sf::RectangleShape trackLeft;
@@ -42,4 +42,4 @@ class PlayState : public State
     void snapshot(sf::RenderTexture& renderTexture);
 };
 
-#endif // PLAY_STATE_H
+#endif  

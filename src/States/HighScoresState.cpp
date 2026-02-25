@@ -51,7 +51,7 @@ HighScoresState::init()
     highScoresText.setCharacterSize(22);
     highScoresText.setFillColor(sf::Color(180, 180, 180));
     highScoresText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
-    // Origin will be set after loading scores to center it correctly
+     
 
     loadHighScores();
     eventManager.addListener(
@@ -128,7 +128,7 @@ HighScoresState::loadHighScores()
 
     highScoresText.setString(scores);
 
-    // Center the multi-line text block
+     
     auto bounds = highScoresText.getLocalBounds();
     highScoresText.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top);
     highScoresText.setPosition(WindowManager::getWindow().getSize().x / 2.0f,

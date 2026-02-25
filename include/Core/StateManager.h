@@ -27,4 +27,4 @@ class StateManager
     StateManager& operator=(const StateManager&) = delete;
     StateManager(const StateManager&) = delete;
 };
-#endif // STATE_MANAGER_H
+#endif  

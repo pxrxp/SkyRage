@@ -29,4 +29,4 @@ struct StateEqual
     bool operator()(StateID lhs, StateID rhs) const { return lhs == rhs; }
 };
 
-#endif // STATE_ID_H
+#endif  

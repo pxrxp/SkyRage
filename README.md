@@ -24,7 +24,7 @@ SKY RAGE is a high-speed, top-down tactical evasion game written in C++17. It ut
 
 ### Project Structure
 ```text
-RevvedUp/
+SkyRage/
 ├── external/         # Git submodules (SFML source)
 ├── assets/           # Textures (.png), Audio (.ogg), and Fonts (.ttf)
 ├── include/          # Header files (.h)
@@ -111,13 +111,13 @@ The success output from the automated build scripts ensures the active executabl
 
 **Windows:**
 ```powershell
-.\build\bin\Release\RevvedUp.exe   # Produced via MSVC
-.\build\bin\RevvedUp.exe           # Produced via MinGW
+.\build\bin\Release\SkyRage.exe   # Produced via MSVC
+.\build\bin\SkyRage.exe           # Produced via MinGW
 ```
 
 **Linux / macOS:**
 ```bash
-./build/bin/RevvedUp
+./build/bin/SkyRage
 ```
 
 ---

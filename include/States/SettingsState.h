@@ -28,4 +28,4 @@ class SettingsState : public State
     void saveCurrentMap();
 };
 
-#endif // SETTINGSSTATE_H
+#endif  

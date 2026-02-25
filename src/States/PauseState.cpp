@@ -24,7 +24,7 @@ PauseState::init()
     soundManager.pauseSound();
 
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
-    overlay.setFillColor(sf::Color(5, 5, 8, 235)); // Ultra Dark Obsidian
+    overlay.setFillColor(sf::Color(5, 5, 8, 235));  
 
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);

@@ -1,7 +1,7 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include "Components/PlayerCar.h"
+#include "Components/PlayerPlane.h"
 #include "Core/TextureManager.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -33,7 +33,7 @@ class Background : public sf::Drawable
     float scrollOffset;
     float scrollSpeed;
     sf::Sprite sprite;
-    sf::Sprite secondSprite; // For seamless scrolling
+    sf::Sprite secondSprite;  
     TextureID currentTexture;
     std::vector<Atlas> atlases;
 
@@ -46,7 +46,7 @@ class Background : public sf::Drawable
 
   public:
     void init();
-    void update(const sf::Time& deltaTime, const PlayerCar& car);
+    void update(const sf::Time& deltaTime, const PlayerPlane& plane);
     void handleEvents(const sf::Event& event);
 
     void changeAtlas(TextureID id);
@@ -55,4 +55,4 @@ class Background : public sf::Drawable
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
-#endif // BACKGROUND_H
+#endif  

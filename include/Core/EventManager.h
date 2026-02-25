@@ -32,4 +32,4 @@ class EventManager
       listeners;
 };
 
-#endif // EVENT_MANAGER_H
+#endif  

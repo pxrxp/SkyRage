@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class PlayerCar : public sf::Drawable
+class PlayerPlane : public sf::Drawable
 {
   private:
     bool leftMovement;
@@ -32,7 +32,7 @@ class PlayerCar : public sf::Drawable
                           float initialScaleY);
 
   public:
-    PlayerCar();
+    PlayerPlane();
 
     void init();
     void update(const sf::Time& deltaTime);
@@ -53,4 +53,4 @@ class PlayerCar : public sf::Drawable
     void setMovementBoundaryN(float minX, float maxX);
 };
 
-#endif // PLAYER_CAR_H
+#endif  

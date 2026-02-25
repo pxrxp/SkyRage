@@ -50,4 +50,4 @@ class SoundManager
     bool isPaused;
 };
 
-#endif // SOUNDMANAGER_H
+#endif  

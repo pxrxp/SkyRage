@@ -1,4 +1,4 @@
-#include "Components/PlayerCar.h"
+#include "Components/PlayerPlane.h"
 #include "Core/TextureManager.h"
 #include "Core/WindowManager.h"
 #include "States/SettingsState.h"
@@ -14,12 +14,12 @@ static float INITIAL_POSITION_Y = 0.8f;
 static float INITIAL_SCALE_X = 0.08f;
 static float INITIAL_SCALE_Y = 0.15f;
 static float BOOST_MULTIPLIER = 2.5f;
-static float MAX_VELOCITY = 8.0f; // Capped to maintain background illusion
+static float MAX_VELOCITY = 8.0f;  
 
 static float TRANSITION_DURATION = 2.0f;
 }
 
-PlayerCar::PlayerCar()
+PlayerPlane::PlayerPlane()
   : leftMovement(false)
   , rightMovement(false)
   , accelerateMovement(false)
@@ -30,7 +30,7 @@ PlayerCar::PlayerCar()
 }
 
 void
-PlayerCar::resizeWithWindow(float newWindowWidth,
+PlayerPlane::resizeWithWindow(float newWindowWidth,
                             float newWindowHeight,
                             float initialScaleX,
                             float initialScaleY)
@@ -46,24 +46,24 @@ PlayerCar::resizeWithWindow(float newWindowWidth,
 }
 
 float
-PlayerCar::getVelocity() const
+PlayerPlane::getVelocity() const
 {
     return forwardVelocity;
 }
 void
-PlayerCar::setTargetVelocity(float velocity)
+PlayerPlane::setTargetVelocity(float velocity)
 {
     targetVelocity = velocity;
 }
 
 sf::Vector2f
-PlayerCar::getPositionN() const
+PlayerPlane::getPositionN() const
 {
     return positionN;
 }
 
 void
-PlayerCar::handleEvents(const sf::Event& event)
+PlayerPlane::handleEvents(const sf::Event& event)
 {
     if (event.type == sf::Event::Resized) {
         sprite.setPosition(positionN.x * event.size.width,
@@ -105,7 +105,7 @@ PlayerCar::handleEvents(const sf::Event& event)
 }
 
 void
-PlayerCar::init()
+PlayerPlane::init()
 {
     leftMovement = false;
     rightMovement = false;
@@ -127,10 +127,10 @@ PlayerCar::init()
     exhaustSprite.setColor(sf::Color(255, 165, 0, 0));
 
     auto spriteBounds = sprite.getLocalBounds();
-    sprite.setOrigin(spriteBounds.width / 2, spriteBounds.height);
+    sprite.setOrigin(spriteBounds.width / 2.0f, spriteBounds.height / 2.0f);
 
     auto texSize = texManager.getTexture(TextureID::EXHAUST).getSize();
-    // Standard full texture for exhaust (as per user update)
+     
     exhaustSprite.setTextureRect(
       sf::IntRect(0,
                   0,
@@ -147,7 +147,7 @@ PlayerCar::init()
 }
 
 void
-PlayerCar::update(const sf::Time& deltaTime)
+PlayerPlane::update(const sf::Time& deltaTime)
 {
     updateVelocity(deltaTime);
     updatePosition(deltaTime);
@@ -159,8 +159,14 @@ PlayerCar::update(const sf::Time& deltaTime)
         exhaustSprite.setScale(pulse * sprite.getScale().x * 2.5f,
                                pulse * sprite.getScale().y * 2.5f);
 
-        exhaustSprite.setPosition(sprite.getPosition().x,
-                                  sprite.getPosition().y + 10.0f);
+        float height = sprite.getLocalBounds().height * sprite.getScale().y;
+        float rad = sprite.getRotation() * 3.14159265f / 180.0f;
+        float tailX =
+          sprite.getPosition().x - std::sin(rad) * ((height / 2.0f) + 10.0f);
+        float tailY =
+          sprite.getPosition().y + std::cos(rad) * ((height / 2.0f) + 10.0f);
+
+        exhaustSprite.setPosition(tailX, tailY);
         exhaustSprite.setRotation(sprite.getRotation());
     } else {
         exhaustSprite.setColor(sf::Color(255, 100, 0, 0));
@@ -168,10 +174,10 @@ PlayerCar::update(const sf::Time& deltaTime)
 }
 
 void
-PlayerCar::updateVelocity(const sf::Time& deltaTime)
+PlayerPlane::updateVelocity(const sf::Time& deltaTime)
 {
     float dt = deltaTime.asSeconds();
-    float accel = 2.0f; // Faster acceleration
+    float accel = 2.0f;  
     float decel = 1.0f;
 
     if (accelerateMovement) {
@@ -192,7 +198,7 @@ PlayerCar::updateVelocity(const sf::Time& deltaTime)
 }
 
 void
-PlayerCar::updatePosition(const sf::Time& deltaTime)
+PlayerPlane::updatePosition(const sf::Time& deltaTime)
 {
     auto windowSize = WindowManager::getWindow().getSize();
     float map = SettingsState::readCurrentMap();
@@ -212,7 +218,7 @@ PlayerCar::updatePosition(const sf::Time& deltaTime)
         positionN.x = next_pos.x / windowSize.x;
     }
 
-    // Restore banking tilt for top-down 2D view
+     
     float targetRotation = direction * 15.0f;
     float currentRotation = sprite.getRotation();
     if (currentRotation > 180.0f)
@@ -225,16 +231,16 @@ PlayerCar::updatePosition(const sf::Time& deltaTime)
 }
 
 bool
-PlayerCar::intersectsBoundary(const sf::FloatRect& boundary)
+PlayerPlane::intersectsBoundary(const sf::FloatRect& boundary)
 {
     return boundary.intersects(sprite.getGlobalBounds());
 }
 
 sf::FloatRect
-PlayerCar::getBounds() const
+PlayerPlane::getBounds() const
 {
-    // Return a tightened bounding box (70% of original) for fairer collision
-    // detection
+     
+     
     auto bounds = sprite.getGlobalBounds();
     float shrinkFactor = 0.7f;
     float newWidth = bounds.width * shrinkFactor;
@@ -247,27 +253,27 @@ PlayerCar::getBounds() const
 }
 
 float
-PlayerCar::getWidthN() const
+PlayerPlane::getWidthN() const
 {
     auto globalBounds = sprite.getGlobalBounds();
     return globalBounds.width / WindowManager::getWindow().getSize().x;
 }
 
 void
-PlayerCar::setVelocity(float velocity)
+PlayerPlane::setVelocity(float velocity)
 {
     forwardVelocity = velocity;
 }
 
 void
-PlayerCar::draw(sf::RenderTarget& target, sf::RenderStates states) const
+PlayerPlane::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(exhaustSprite, states);
     target.draw(sprite, states);
 }
 
 void
-PlayerCar::setSpritePositionN(sf::Vector2f position)
+PlayerPlane::setSpritePositionN(sf::Vector2f position)
 {
     auto windowSize = WindowManager::getWindow().getSize();
     sprite.setPosition(
@@ -275,14 +281,14 @@ PlayerCar::setSpritePositionN(sf::Vector2f position)
 }
 
 void
-PlayerCar::setSpriteScaleN(sf::Vector2f scale)
+PlayerPlane::setSpriteScaleN(sf::Vector2f scale)
 {
     auto windowSize = WindowManager::getWindow().getSize();
     sprite.setScale({ scale.x / windowSize.x, scale.y / windowSize.y });
 }
 
 void
-PlayerCar::setMovementBoundaryN(float minXN, float maxXN)
+PlayerPlane::setMovementBoundaryN(float minXN, float maxXN)
 {
     this->minXN = minXN;
     this->maxXN = maxXN;
