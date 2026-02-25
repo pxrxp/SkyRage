@@ -9,7 +9,7 @@
 [![SFML](https://img.shields.io/badge/SFML-%238CC445.svg?style=flat&logo=sfml&logoColor=white)](https://www.sfml-dev.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23064F8C.svg?style=flat&logo=cmake&logoColor=white)](https://cmake.org/)
 
-Master the skies in this high-octane, SFML-powered aerial evasion thrill-ride.
+SKY RAGE is a high-speed, top-down tactical evasion game written in C++17. It utilizes a custom engine architecture built on top of SFML, functioning with a stack-based state machine, centralized resource managers, and dynamic entity scaling.
 
 ---
 
