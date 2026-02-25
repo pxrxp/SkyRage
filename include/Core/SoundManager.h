@@ -3,6 +3,7 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/System.hpp>
+#include <atomic>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -47,7 +48,8 @@ class SoundManager
     std::mutex isPlayingMutex;
     bool isPlaying;
 
+    std::atomic<bool> clearRequested;
     bool isPaused;
 };
 
-#endif  
+#endif

@@ -34,19 +34,18 @@ PlayState::PlayState()
 
     timeText.setFont(textFont);
     timeText.setCharacterSize(30);
-    timeText.setFillColor(sf::Color(120, 120, 120));  
+    timeText.setFillColor(sf::Color(120, 120, 120));
     timeText.setOutlineThickness(1);
     timeText.setOutlineColor(sf::Color::Black);
     timeText.setPosition(0.05f * windowSize.x, 0.05f * windowSize.y);
 
     distanceText.setFont(textFont);
     distanceText.setCharacterSize(30);
-    distanceText.setFillColor(sf::Color(80, 90, 100));  
+    distanceText.setFillColor(sf::Color(80, 90, 100));
     distanceText.setOutlineThickness(1);
     distanceText.setOutlineColor(sf::Color::Black);
     distanceText.setPosition(0.05f * windowSize.x, 0.09f * windowSize.y);
 
-     
     progressBarBackground.setSize(sf::Vector2f(windowSize.x * 0.4f, 10));
     progressBarBackground.setFillColor(sf::Color(20, 20, 20, 200));
     progressBarBackground.setOutlineThickness(1);
@@ -61,12 +60,11 @@ PlayState::PlayState()
     progressBarFill.setPosition(windowSize.x * 0.3f, 0.05f * windowSize.y);
     progressBarFill.setOrigin(0, progressBarFill.getSize().y / 2.0f);
 
-     
     countdownText.setFont(font);
     countdownText.setCharacterSize(180);
     countdownText.setFillColor(sf::Color::White);
     countdownText.setOutlineThickness(2);
-    countdownText.setOutlineColor(sf::Color(80, 90, 100));  
+    countdownText.setOutlineColor(sf::Color(80, 90, 100));
     countdownText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 100);
 }
 
@@ -210,13 +208,10 @@ PlayState::update(const sf::Time& deltaTime)
     plane.update(deltaTime);
     background.update(deltaTime, plane);
 
-     
-     
     float planeWidth = plane.getWidthN();
     enemySpawner.update(
       deltaTime, plane.getPositionN(), planeWidth, plane.getVelocity());
 
-     
     playingTime += dt;
     int minutes = static_cast<int>(playingTime) / 60;
     int seconds = static_cast<int>(playingTime) % 60;
@@ -224,8 +219,7 @@ PlayState::update(const sf::Time& deltaTime)
     timeText.setString("Time: " + std::to_string(minutes) + ":" +
                        (seconds < 10 ? "0" : "") + std::to_string(seconds));
 
-     
-    float speedMultiplier = 200.0f;  
+    float speedMultiplier = 200.0f;
     distanceCovered -= plane.getVelocity() * dt * speedMultiplier;
 
     if (distanceCovered <= 0.0f) {
@@ -235,12 +229,10 @@ PlayState::update(const sf::Time& deltaTime)
     distanceText.setString(
       "Distance: " + std::to_string(static_cast<int>(distanceCovered)) + "m");
 
-     
     float progress = 1.0f - (distanceCovered / maxDistance);
     progressBarFill.setSize(
       sf::Vector2f(progressBarBackground.getSize().x * progress, 10));
 
-     
     auto planeBounds = plane.getBounds();
     for (auto& enemy : enemySpawner.getEnemies()) {
         if (planeBounds.intersects(enemy->getBounds())) {
@@ -255,7 +247,6 @@ PlayState::update(const sf::Time& deltaTime)
         }
     }
 
-     
     if (distanceCovered <= 0.0f) {
         gameEnded = true;
         SoundManager::getInstance().getMusic().stop();
@@ -322,6 +313,7 @@ void
 PlayState::exit()
 {
     auto& eventManager = EventManager::getInstance();
+    SoundManager::getInstance().clearQueue();
     SoundManager::getInstance().getMusic().stop();
     eventManager.removeAllListeners(StateID::Play, sf::Event::KeyPressed);
     eventManager.removeAllListeners(StateID::Play, sf::Event::Resized);

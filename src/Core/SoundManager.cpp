@@ -4,6 +4,7 @@ SoundManager::SoundManager()
   : soundBuffers(static_cast<std::size_t>(SoundID::SOUND_COUNT))
   , soundThread(&SoundManager::playSounds, this)
   , isPlaying(false)
+  , clearRequested(false)
 {
 }
 
@@ -31,6 +32,7 @@ SoundManager::playSound(SoundID id)
         std::lock_guard<std::mutex> lock(isPlayingMutex);
         if (!isPlaying) {
             isPlaying = true;
+            clearRequested = false;
             soundThread.launch();
         }
     }
@@ -60,12 +62,20 @@ SoundManager::playSounds()
         sound.play();
 
         while (sound.getStatus() == sf::Sound::Playing) {
-            {
-                if (isPaused) {
-                    sound.pause();
-                    while (isPaused) {
-                        sf::sleep(sf::milliseconds(100));
-                    }
+            if (clearRequested) {
+                sound.stop();
+                {
+                    std::lock_guard<std::mutex> lock(isPlayingMutex);
+                    isPlaying = false;
+                }
+                return;
+            }
+            if (isPaused) {
+                sound.pause();
+                while (isPaused && !clearRequested) {
+                    sf::sleep(sf::milliseconds(100));
+                }
+                if (!clearRequested) {
                     sound.play();
                 }
             }
@@ -83,6 +93,7 @@ SoundManager::getMusic()
 void
 SoundManager::clearQueue()
 {
+    clearRequested = true;
     std::lock_guard<std::mutex> lock(queueMutex);
     std::queue<SoundID> emptyQueue;
     std::swap(soundQueue, emptyQueue);
