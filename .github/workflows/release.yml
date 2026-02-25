@@ -90,10 +90,10 @@ jobs:
             
             # Create launcher script
             cat << 'EOF' > release/skyrage.sh
-#!/bin/bash
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(dirname "$(readlink -f "$0")")/libs"
-exec "$(dirname "$(readlink -f "$0")")/SkyRage" "$@"
-EOF
+          #!/bin/bash
+          export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(dirname "$(readlink -f "$0")")/libs"
+          exec "$(dirname "$(readlink -f "$0")")/SkyRage" "$@"
+          EOF
             chmod +x release/skyrage.sh
           fi
 
