@@ -71,13 +71,32 @@ jobs:
         run: |
           mkdir -p release/assets
           if [ -f "build/bin/SkyRage" ]; then
-            cp build/bin/SkyRage release/
+            EXE_PATH="build/bin/SkyRage"
           else
-            # Fallback for different output structures
-            find build -name SkyRage -type f -maxdepth 4 -exec cp {} release/ \;
+            EXE_PATH=$(find build -name SkyRage -type f -maxdepth 4 | head -n 1)
           fi
+          cp "$EXE_PATH" release/
           chmod +x release/SkyRage
           cp -r assets/* release/assets/
+
+          # Bundle libraries for Linux
+          if [ "${{ runner.os }}" == "Linux" ]; then
+            mkdir -p release/libs
+            # Bundle non-standard libraries (FLAC, Vorbis, Ogg, OpenAL, etc.)
+            # Exclude core system libs to avoid conflicts with host
+            ldd release/SkyRage | grep "=> /" | awk '{print $3}' | \
+              grep -E 'libFLAC|libvorbis|libogg|libopenal|libvorbisenc|libvorbisfile|libsndio' | \
+              xargs -I {} cp -v {} release/libs/ || true
+            
+            # Create launcher script
+            cat << 'EOF' > release/skyrage.sh
+#!/bin/bash
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(dirname "$(readlink -f "$0")")/libs"
+exec "$(dirname "$(readlink -f "$0")")/SkyRage" "$@"
+EOF
+            chmod +x release/skyrage.sh
+          fi
+
           cd release
           tar -czf ../SkyRage-${{ matrix.platform.name }}-${{ github.ref_name }}.tar.gz .
 
@@ -93,6 +112,14 @@ jobs:
           } else {
             Get-ChildItem -Path build -Filter SkyRage.exe -Recurse | Select-Object -First 1 | Copy-Item -Destination release/
           }
+          
+          # Bundle any necessary DLLs (OpenAL, etc.)
+          Get-ChildItem -Path build -Filter *.dll -Recurse | ForEach-Object {
+            if (-not (Test-Path "release/$($_.Name)")) {
+              Copy-Item -Path $_.FullName -Destination release/
+            }
+          }
+
           Copy-Item -Path assets/* -Destination release/assets/ -Recurse
           Compress-Archive -Path release/* -DestinationPath SkyRage-${{ matrix.platform.name }}-${{ github.ref_name }}.zip
 

@@ -18,7 +18,8 @@ constexpr int MAX_ATLAS_ID = 2;
 std::size_t
 SettingsState::readCurrentMap()
 {
-    std::ifstream settingsFile(Util::getExecutablePath() / "settings.txt");
+    std::ifstream settingsFile(
+      (Util::getExecutablePath() / "settings.txt").string());
     std::string line;
 
     if (settingsFile.is_open()) {
@@ -34,8 +35,9 @@ SettingsState::readCurrentMap()
 void
 SettingsState::saveCurrentMap()
 {
-    std::ofstream settingsFile(Util::getExecutablePath() / "settings.txt",
-                               std::ios::out | std::ios::trunc);
+    std::ofstream settingsFile(
+      (Util::getExecutablePath() / "settings.txt").string(),
+      std::ios::out | std::ios::trunc);
     if (settingsFile.is_open()) {
         settingsFile << currentMap;
         settingsFile.close();

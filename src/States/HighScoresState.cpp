@@ -51,7 +51,6 @@ HighScoresState::init()
     highScoresText.setCharacterSize(22);
     highScoresText.setFillColor(sf::Color(180, 180, 180));
     highScoresText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
-     
 
     loadHighScores();
     eventManager.addListener(
@@ -111,7 +110,7 @@ HighScoresState::handleEvents(const sf::Event& event)
 void
 HighScoresState::loadHighScores()
 {
-    std::ifstream file(Util::getExecutablePath() / "highscores.txt");
+    std::ifstream file((Util::getExecutablePath() / "highscores.txt").string());
     std::string line;
     std::string scores;
 
@@ -128,7 +127,6 @@ HighScoresState::loadHighScores()
 
     highScoresText.setString(scores);
 
-     
     auto bounds = highScoresText.getLocalBounds();
     highScoresText.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top);
     highScoresText.setPosition(WindowManager::getWindow().getSize().x / 2.0f,
