@@ -4,7 +4,7 @@
 [![SFML](https://img.shields.io/badge/SFML-%238CC445.svg?style=flat&logo=sfml&logoColor=white)](https://www.sfml-dev.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23064F8C.svg?style=flat&logo=cmake&logoColor=white)](https://cmake.org/)
 
-SKY RAGE is a high-speed, top-down tactical evasion game written in C++17. It utilizes a custom engine architecture built on top of SFML, functioning with a stack-based state machine, centralized resource managers, and dynamic entity scaling.
+Master the skies in this high-octane, SFML-powered aerial evasion thrill-ride.
 
 ---
 
@@ -13,6 +13,7 @@ SKY RAGE is a high-speed, top-down tactical evasion game written in C++17. It ut
 2. [Engine Architecture](#-engine-architecture)
 3. [Gameplay Mechanics](#-gameplay-mechanics)
 4. [Build & Setup](#-build--setup)
+5. [Releases](#-releases)
 
 ---
 
@@ -119,6 +120,22 @@ The success output from the automated build scripts ensures the active executabl
 ```bash
 ./build/bin/SkyRage
 ```
+
+---
+
+## 🚀 Releases
+
+To automate creation of production-ready binaries for Windows, Linux, and macOS, this repository uses GitHub Actions.
+
+### Triggering a New Release
+Creating a release is as simple as pushing a version tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This triggers the **Release** workflow, which compiles the game for all platforms and attaches the bundled `.zip` and `.tar.gz` files to a new GitHub Release.
 
 ---
 Built with ❤️ — SKY RAGE

@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libudev-dev \
+            libopengl-dev \
+            libflac-dev \
+            libvorbis-dev \
+            libopenal-dev \
+            libvorbis-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libfreetype6-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build --config Release --parallel 4
+
+      - name: Prepare Package (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p release/assets
+          if [ "${{ runner.os }}" == "macOS" ]; then
+            cp build/bin/SkyRage release/
+          else
+            cp build/bin/SkyRage release/
+          fi
+          cp -r assets/* release/assets/
+          cd release
+          tar -czf ../SkyRage-${{ runner.os }}-${{ github.ref_name }}.tar.gz .
+
+      - name: Prepare Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release/assets
+          Copy-Item -Path build/bin/Release/SkyRage.exe -Destination release/
+          Copy-Item -Path assets/* -Destination release/assets/ -Recurse
+          Compress-Archive -Path release/* -DestinationPath SkyRage-Windows-${{ github.ref_name }}.zip
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkyRage-${{ matrix.os }}
+          path: |
+            *.tar.gz
+            *.zip
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
