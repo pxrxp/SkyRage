@@ -29,7 +29,7 @@ TextureManager::loadTexture(const TextureID id,
 {
     std::size_t ID = static_cast<std::size_t>(id);
     sf::Texture texture;
-    texture.loadFromFile(filePath);
+    texture.loadFromFile(filePath.string());
     texture.setSmooth(true);
     textures.at(ID) = std::move(texture);
 }

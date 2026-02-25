@@ -91,16 +91,18 @@ PlayState::init()
                                Util::getExecutablePath() /
                                  "assets/enemy_plane.png");
 
-    soundManager.loadSound(SoundID::THREE,
-                           Util::getExecutablePath() / "assets/three.ogg");
-    soundManager.loadSound(SoundID::TWO,
-                           Util::getExecutablePath() / "assets/two.ogg");
-    soundManager.loadSound(SoundID::ONE,
-                           Util::getExecutablePath() / "assets/one.ogg");
-    soundManager.loadSound(SoundID::GO,
-                           Util::getExecutablePath() / "assets/go.ogg");
-    soundManager.loadSound(SoundID::CRASH,
-                           Util::getExecutablePath() / "assets/crash.ogg");
+    soundManager.loadSound(
+      SoundID::THREE,
+      (Util::getExecutablePath() / "assets/three.ogg").string());
+    soundManager.loadSound(
+      SoundID::TWO, (Util::getExecutablePath() / "assets/two.ogg").string());
+    soundManager.loadSound(
+      SoundID::ONE, (Util::getExecutablePath() / "assets/one.ogg").string());
+    soundManager.loadSound(
+      SoundID::GO, (Util::getExecutablePath() / "assets/go.ogg").string());
+    soundManager.loadSound(
+      SoundID::CRASH,
+      (Util::getExecutablePath() / "assets/crash.ogg").string());
 
     auto& music = soundManager.getMusic();
     if (music.openFromFile(

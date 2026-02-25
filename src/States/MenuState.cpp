@@ -18,7 +18,7 @@
 MenuState::MenuState()
   : State(StateID::Menu)
   , defaultColor(sf::Color(180, 180, 180))
-  , hoverColor(sf::Color(70, 80, 95))  
+  , hoverColor(sf::Color(70, 80, 95))
   , selectedButtonIndex(0)
 {
 }
@@ -45,8 +45,9 @@ MenuState::init()
       static_cast<float>(windowSize.x) / background.getTexture()->getSize().x,
       static_cast<float>(windowSize.y) / background.getTexture()->getSize().y);
 
-    soundManager.loadSound(SoundID::HOVER,
-                           Util::getExecutablePath() / "assets/hover.ogg");
+    soundManager.loadSound(
+      SoundID::HOVER,
+      (Util::getExecutablePath() / "assets/hover.ogg").string());
 
     fontManager.loadFont(
       FontID::TITLE, Util::getExecutablePath() / "assets/PreschoolBits.ttf");
@@ -65,7 +66,6 @@ MenuState::init()
     title.setOrigin(title.getLocalBounds().width / 2.0f,
                     title.getLocalBounds().height / 2.0f);
 
-     
     for (int i = 0; i < 4; ++i) {
         sf::Text glowText = title;
         glowText.setFillColor(sf::Color(70, 80, 95, 30));
@@ -130,7 +130,6 @@ MenuState::update(const sf::Time& deltaTime)
     auto mousePos = sf::Mouse::getPosition(WindowManager::getWindow());
     updateButtonStates(static_cast<sf::Vector2f>(mousePos));
 
-     
     float time = static_cast<float>(std::clock()) / CLOCKS_PER_SEC;
     for (size_t i = 0; i < titleGlowLayers.size(); ++i) {
         float offset = (i + 1) * 2.0f * std::sin(time * 3.0f + i);

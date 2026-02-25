@@ -3,7 +3,8 @@
 
 namespace {
 const sf::String TITLE = "Sky Rage";
-const std::string ICON_PATH = Util::getExecutablePath() / "assets/icon.png";
+const std::string ICON_PATH =
+  (Util::getExecutablePath() / "assets/icon.png").string();
 bool isFullScreen = false;
 }
 

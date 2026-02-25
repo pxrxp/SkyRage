@@ -27,7 +27,7 @@ FontManager::loadFont(const FontID id, const std::filesystem::path& filePath)
 {
     std::size_t ID = static_cast<std::size_t>(id);
     sf::Font font;
-    font.loadFromFile(filePath);
+    font.loadFromFile(filePath.string());
     font.setSmooth(true);
     fonts.at(ID) = std::move(font);
 }
