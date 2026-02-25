@@ -27,20 +27,32 @@ GameOverState::init()
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
+    panel.setSize(sf::Vector2f(700, 450));
+    panel.setFillColor(sf::Color(8, 9, 10, 250)); // Obsidian Dark
+    panel.setOutlineThickness(1);
+    panel.setOutlineColor(sf::Color(60, 70, 80));
+    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
+    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
+
     gameOverText.setFont(font);
-    gameOverText.setString("GAME OVER");
-    gameOverText.setCharacterSize(50);
+    gameOverText.setString("MISSION\nTERMINATED");
+    gameOverText.setCharacterSize(55);
     gameOverText.setFillColor(sf::Color::White);
+    gameOverText.setLineSpacing(1.1f);
     auto localBounds = gameOverText.getLocalBounds();
-    gameOverText.setOrigin(localBounds.width / 2.0f, localBounds.height / 2.0f);
-    gameOverText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 20);
+    gameOverText.setOrigin(localBounds.left + localBounds.width / 2.0f,
+                           localBounds.top + localBounds.height / 2.0f);
+    gameOverText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 40);
 
     instructionsText.setFont(textFont);
-    instructionsText.setString("Press Esc to return to main menu");
-    instructionsText.setCharacterSize(15);
-    instructionsText.setFillColor(sf::Color::White);
-    instructionsText.setPosition(
-      0.0f, windowSize.y - instructionsText.getCharacterSize() * 1);
+    instructionsText.setString("PRESS ESC TO RETURN TO HQ");
+    instructionsText.setCharacterSize(28);
+    instructionsText.setFillColor(sf::Color(140, 140, 140));
+    auto instrBounds = instructionsText.getLocalBounds();
+    instructionsText.setOrigin(instrBounds.left + instrBounds.width / 2.0f,
+                               instrBounds.top + instrBounds.height / 2.0f);
+    instructionsText.setPosition(windowSize.x / 2.0f,
+                                 windowSize.y / 2.0f + 140);
 
     eventManager.addListener(
       StateID::GameOver,
@@ -64,6 +76,7 @@ GameOverState::render(sf::RenderTarget& target)
     sf::Sprite snapshotSprite(snapshot.getTexture());
     target.draw(snapshotSprite);
     target.draw(overlay);
+    target.draw(panel);
     target.draw(gameOverText);
     target.draw(instructionsText);
 }

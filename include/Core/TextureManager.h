@@ -8,11 +8,12 @@
 
 enum class TextureID
 {
-    ATLAS0,
-    ATLAS1,
-    ATLAS2,
-    GHOST,
-    CAR0,
+    SKY_DAY,
+    SKY_NIGHT,
+    SKY_SUNSET,
+    ENEMY_PLANE,
+    PLAYER_PLANE,
+    EXHAUST,
     MENU_BACKGROUND,
     TEXTURE_COUNT
 };

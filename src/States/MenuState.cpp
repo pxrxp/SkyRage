@@ -11,12 +11,14 @@
 #include "States/SettingsState.h"
 #include "Util/Path.h"
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include <ctime>
 #include <functional>
 
 MenuState::MenuState()
   : State(StateID::Menu)
-  , defaultColor(sf::Color::White)
-  , hoverColor(sf::Color::Yellow)
+  , defaultColor(sf::Color(180, 180, 180))
+  , hoverColor(sf::Color(70, 80, 95)) // Darker Slate
   , selectedButtonIndex(0)
 {
 }
@@ -56,36 +58,52 @@ MenuState::init()
 
     auto& font = fontManager.getFont(FontID::TITLE);
     title.setFont(font);
-    title.setString("Race");
-    title.setCharacterSize(120);
-    title.setFillColor(defaultColor);
+    title.setString("SKY RAGE");
+    title.setCharacterSize(140);
+    title.setFillColor(sf::Color::White);
     title.setPosition(windowSize.x / 2.0f, windowSize.y / 4.0f);
     title.setOrigin(title.getLocalBounds().width / 2.0f,
                     title.getLocalBounds().height / 2.0f);
 
+    // Create Glow Layers
+    for (int i = 0; i < 4; ++i) {
+        sf::Text glowText = title;
+        glowText.setFillColor(sf::Color(70, 80, 95, 30));
+        titleGlowLayers.push_back(glowText);
+    }
+
     std::vector<std::string> buttonLabels = {
-        "Play", "How to Play", "High Scores", "Settings"
+        "START MISSION", "FLIGHT MANUAL", "TOP ACES", "OPTIONS"
     };
     for (size_t i = 0; i < buttonLabels.size(); ++i) {
         sf::Text buttonText;
         buttonText.setFont(font);
         buttonText.setString(buttonLabels[i]);
-        buttonText.setCharacterSize(40);
+        buttonText.setCharacterSize(45);
         buttonText.setFillColor(defaultColor);
         buttonText.setPosition(windowSize.x / 2.0f,
-                               windowSize.y / 2.0f + i * 65);
+                               windowSize.y / 2.0f + i * 85);
         buttonText.setOrigin(buttonText.getLocalBounds().width / 2.0f,
                              buttonText.getLocalBounds().height / 2.0f);
         buttons.push_back(buttonText);
 
         sf::RectangleShape buttonBackground;
-        buttonBackground.setSize(sf::Vector2f(400, 60));
-        buttonBackground.setFillColor(sf::Color(0, 0, 0));
+        buttonBackground.setSize(sf::Vector2f(450, 70));
+        buttonBackground.setFillColor(sf::Color(20, 20, 20, 180));
         buttonBackground.setPosition(windowSize.x / 2.0f,
-                                     windowSize.y / 2.0f + i * 66 + 5);
+                                     windowSize.y / 2.0f + i * 85);
         buttonBackground.setOrigin(buttonBackground.getSize().x / 2.0f,
                                    buttonBackground.getSize().y / 2.0f);
         buttonBackgrounds.push_back(buttonBackground);
+
+        sf::RectangleShape border;
+        border.setSize(sf::Vector2f(450, 70));
+        border.setFillColor(sf::Color::Transparent);
+        border.setOutlineThickness(2);
+        border.setOutlineColor(sf::Color(100, 100, 100));
+        border.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f + i * 85);
+        border.setOrigin(border.getSize().x / 2.0f, border.getSize().y / 2.0f);
+        buttonBorders.push_back(border);
     }
 
     eventManager.addListener(
@@ -111,6 +129,14 @@ MenuState::update(const sf::Time& deltaTime)
 {
     auto mousePos = sf::Mouse::getPosition(WindowManager::getWindow());
     updateButtonStates(static_cast<sf::Vector2f>(mousePos));
+
+    // Animate Glow
+    float time = static_cast<float>(std::clock()) / CLOCKS_PER_SEC;
+    for (size_t i = 0; i < titleGlowLayers.size(); ++i) {
+        float offset = (i + 1) * 2.0f * std::sin(time * 3.0f + i);
+        titleGlowLayers[i].setPosition(title.getPosition().x + offset,
+                                       title.getPosition().y + offset);
+    }
 }
 
 void
@@ -118,9 +144,15 @@ MenuState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(overlay);
+
+    for (auto& glow : titleGlowLayers) {
+        target.draw(glow);
+    }
     target.draw(title);
-    for (const auto& buttonBackground : buttonBackgrounds) {
-        target.draw(buttonBackground);
+
+    for (size_t i = 0; i < buttonBackgrounds.size(); ++i) {
+        target.draw(buttonBackgrounds[i]);
+        target.draw(buttonBorders[i]);
     }
     for (const auto& button : buttons) {
         target.draw(button);
@@ -203,13 +235,24 @@ void
 MenuState::updateButtonStates(const sf::Vector2f& mousePos)
 {
     for (size_t i = 0; i < buttonBackgrounds.size(); ++i) {
-        if (buttonBackgrounds[i].getGlobalBounds().contains(mousePos)) {
-            buttons[i].setFillColor(hoverColor);
+        bool hovered =
+          buttonBackgrounds[i].getGlobalBounds().contains(mousePos);
+        bool selected = (i == selectedButtonIndex);
+
+        if (hovered) {
             selectedButtonIndex = i;
-        } else if (i == selectedButtonIndex) {
+        }
+
+        if (hovered || selected) {
             buttons[i].setFillColor(hoverColor);
+            buttons[i].setScale(1.1f, 1.1f);
+            buttonBorders[i].setOutlineColor(hoverColor);
+            buttonBackgrounds[i].setFillColor(sf::Color(40, 40, 40, 240));
         } else {
             buttons[i].setFillColor(defaultColor);
+            buttons[i].setScale(1.0f, 1.0f);
+            buttonBorders[i].setOutlineColor(sf::Color(80, 80, 80));
+            buttonBackgrounds[i].setFillColor(sf::Color(10, 10, 10, 200));
         }
     }
 }

@@ -30,7 +30,10 @@ class Background : public sf::Drawable
         }
     };
 
+    float scrollOffset;
+    float scrollSpeed;
     sf::Sprite sprite;
+    sf::Sprite secondSprite; // For seamless scrolling
     TextureID currentTexture;
     std::vector<Atlas> atlases;
 

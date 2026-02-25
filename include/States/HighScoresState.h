@@ -21,6 +21,8 @@ class HighScoresState : public State
 
     sf::Sprite background;
     sf::RectangleShape overlay;
+    sf::RectangleShape panel;
+    sf::Text title;
     sf::Text highScoresText;
     std::vector<std::string> highScores;
 };

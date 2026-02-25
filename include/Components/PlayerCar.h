@@ -8,8 +8,10 @@ class PlayerCar : public sf::Drawable
   private:
     bool leftMovement;
     bool rightMovement;
+    bool accelerateMovement;
 
     sf::Sprite sprite;
+    sf::Sprite exhaustSprite;
     sf::Vector2f positionN;
 
     float forwardVelocity;
@@ -20,8 +22,6 @@ class PlayerCar : public sf::Drawable
 
     void updatePosition(const sf::Time& deltaTime);
     void updateVelocity(const sf::Time& deltaTime);
-
-    bool intersectsBoundary(const sf::FloatRect& boundary);
 
     virtual void draw(sf::RenderTarget& target,
                       sf::RenderStates states) const override;
@@ -40,6 +40,9 @@ class PlayerCar : public sf::Drawable
 
     sf::Vector2f getPositionN() const;
     float getWidthN() const;
+
+    sf::FloatRect getBounds() const;
+    bool intersectsBoundary(const sf::FloatRect& boundary);
 
     float getVelocity() const;
     void setVelocity(float velocity);

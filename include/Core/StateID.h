@@ -12,7 +12,8 @@ enum class StateID
     HowToPlay,
     HighScores,
     Settings,
-    GameOver
+    GameOver,
+    Win
 };
 
 struct StateHash

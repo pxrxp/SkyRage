@@ -29,13 +29,29 @@ HighScoresState::init()
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
     overlay.setFillColor(sf::Color(0, 0, 0, 230));
 
-    auto& font = FontManager::getInstance().getFont(FontID::TEXT);
-    highScoresText.setFont(font);
-    highScoresText.setCharacterSize(30);
-    highScoresText.setFillColor(sf::Color::White);
-    highScoresText.setPosition(windowSize.x / 2.0f - 30, windowSize.y / 2.0f);
-    highScoresText.setOrigin(highScoresText.getLocalBounds().width / 2,
-                             highScoresText.getLocalBounds().height / 2);
+    auto& font = FontManager::getInstance().getFont(FontID::FANCY);
+    auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
+
+    panel.setSize(sf::Vector2f(600, 600));
+    panel.setFillColor(sf::Color(20, 20, 20, 240));
+    panel.setOutlineThickness(1);
+    panel.setOutlineColor(sf::Color(112, 128, 144));
+    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
+    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
+
+    title.setFont(font);
+    title.setString("HALL OF FAME");
+    title.setCharacterSize(50);
+    title.setFillColor(sf::Color::White);
+    title.setOrigin(title.getLocalBounds().width / 2.0f,
+                    title.getLocalBounds().height / 2.0f);
+    title.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 240);
+
+    highScoresText.setFont(textFont);
+    highScoresText.setCharacterSize(22);
+    highScoresText.setFillColor(sf::Color(180, 180, 180));
+    highScoresText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
+    // Origin will be set after loading scores to center it correctly
 
     loadHighScores();
     eventManager.addListener(
@@ -62,6 +78,8 @@ HighScoresState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(overlay);
+    target.draw(panel);
+    target.draw(title);
     target.draw(highScoresText);
 }
 
@@ -98,8 +116,10 @@ HighScoresState::loadHighScores()
     std::string scores;
 
     if (file.is_open()) {
-        while (std::getline(file, line)) {
-            scores += line + "\n";
+        int count = 0;
+        while (std::getline(file, line) && count < 10) {
+            scores += std::to_string(count + 1) + ". " + line + "\n\n";
+            count++;
         }
         file.close();
     } else {
@@ -107,4 +127,11 @@ HighScoresState::loadHighScores()
     }
 
     highScoresText.setString(scores);
+
+    // Center the multi-line text block
+    auto bounds = highScoresText.getLocalBounds();
+    highScoresText.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top);
+    highScoresText.setPosition(WindowManager::getWindow().getSize().x / 2.0f,
+                               WindowManager::getWindow().getSize().y / 2.0f -
+                                 150);
 }

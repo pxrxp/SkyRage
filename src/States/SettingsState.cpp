@@ -9,15 +9,11 @@
 #include <functional>
 #include <string>
 
-namespace {
 std::string settingsString =
-  std::string("Settings:\n\n") +
-  std::string("Adjust your game setttings here using arrow keys.\n") +
-  std::string("* Press ESC to exit to main menu.\n\n\n\n\n") +
-  std::string("Current map: ");
+  std::string("Use arrow keys to cycle environments.\n\n") +
+  std::string("* Current environment: ");
 
 constexpr int MAX_ATLAS_ID = 2;
-}
 
 std::size_t
 SettingsState::readCurrentMap()
@@ -68,13 +64,30 @@ SettingsState::init()
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
     overlay.setFillColor(sf::Color(0, 0, 0, 230));
 
-    auto& font = FontManager::getInstance().getFont(FontID::TEXT);
+    auto& font = FontManager::getInstance().getFont(FontID::FANCY);
+    auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
-    settingsText.setFont(font);
+    panel.setSize(sf::Vector2f(700, 450));
+    panel.setFillColor(sf::Color(5, 6, 7, 250));
+    panel.setOutlineThickness(1);
+    panel.setOutlineColor(sf::Color(50, 60, 70));
+    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
+    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
+
+    title.setFont(font);
+    title.setString("MISSION CONFIG");
+    title.setCharacterSize(50);
+    title.setFillColor(sf::Color::White);
+    title.setOrigin(
+      title.getLocalBounds().left + title.getLocalBounds().width / 2.0f,
+      title.getLocalBounds().top + title.getLocalBounds().height / 2.0f);
+    title.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 140);
+
+    settingsText.setFont(textFont);
     settingsText.setString(settingsString + std::to_string(currentMap));
-    settingsText.setCharacterSize(30);
+    settingsText.setCharacterSize(25);
     settingsText.setFillColor(sf::Color::White);
-    settingsText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
+    settingsText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f + 20);
     settingsText.setOrigin(settingsText.getLocalBounds().width / 2,
                            settingsText.getLocalBounds().height / 2);
 
@@ -103,6 +116,8 @@ SettingsState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(overlay);
+    target.draw(panel);
+    target.draw(title);
     target.draw(settingsText);
 }
 

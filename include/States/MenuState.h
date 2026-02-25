@@ -21,8 +21,10 @@ class MenuState : public State
     sf::Sprite background;
     sf::RectangleShape overlay;
     sf::Text title;
+    std::vector<sf::Text> titleGlowLayers;
     std::vector<sf::Text> buttons;
     std::vector<sf::RectangleShape> buttonBackgrounds;
+    std::vector<sf::RectangleShape> buttonBorders;
     sf::Color defaultColor;
     sf::Color hoverColor;
     int selectedButtonIndex;

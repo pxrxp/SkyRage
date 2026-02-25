@@ -15,6 +15,7 @@ enum class SoundID
     ONE,
     GO,
     HOVER,
+    CRASH,
     SOUND_COUNT
 };
 

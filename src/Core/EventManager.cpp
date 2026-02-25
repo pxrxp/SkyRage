@@ -36,7 +36,11 @@ EventManager::handleEvent(const StateID state, const sf::Event& event)
     if (event_it == state_it->second.end())
         return;
 
-    for (const auto& callback : event_it->second) {
+    // Make a copy of the callbacks in case they add/remove listeners during
+    // execution
+    auto callbacks_copy = event_it->second;
+
+    for (const auto& callback : callbacks_copy) {
         callback(event);
     }
 }

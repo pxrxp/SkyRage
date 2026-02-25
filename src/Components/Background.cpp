@@ -6,10 +6,8 @@
 constexpr std::size_t NO_OF_ATLASES = 3;
 
 Background::Background()
-  : currentRow(0)
-  , currentCol(0)
-  , currentFrame(0)
-  , currentTime(0.0)
+  : scrollOffset(0.0f)
+  , scrollSpeed(200.0f)
   , atlases(3)
 {
     currentTexture = static_cast<TextureID>(SettingsState::readCurrentMap());
@@ -18,11 +16,11 @@ Background::Background()
 void
 Background::init()
 {
-    atlases.at(static_cast<std::size_t>(TextureID::ATLAS0)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY_DAY)) =
       Atlas(5, 11, 55, 100.0);
-    atlases.at(static_cast<std::size_t>(TextureID::ATLAS1)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY_NIGHT)) =
       Atlas(4, 6, 23, 2.0);
-    atlases.at(static_cast<std::size_t>(TextureID::ATLAS2)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY_SUNSET)) =
       Atlas(4, 6, 23, 500.0);
 
     changeAtlas(currentTexture);
@@ -31,26 +29,18 @@ Background::init()
 void
 Background::update(const sf::Time& deltaTime, const PlayerCar& car)
 {
-    currentTime += deltaTime.asMilliseconds();
+    float dt = deltaTime.asSeconds();
 
-    auto& atlas = atlases.at(static_cast<std::size_t>(currentTexture));
+    // Scroll background downwards to simulate forward flight
+    scrollOffset -= (car.getVelocity() * 160.0f + scrollSpeed) * dt;
 
-    if (!car.getVelocity() || !atlas.frameDurationConstant)
-        return;
+    auto texSize = sprite.getTexture()->getSize();
+    if (scrollOffset < 0.0f) {
+        scrollOffset += static_cast<float>(texSize.y);
+    }
 
-    auto frameDuration =
-      atlas.frameDurationConstant / std::abs(car.getVelocity());
-
-    if (currentTime < frameDuration)
-        return;
-    currentTime -= frameDuration;
-
-    incrementFrame();
-
-    sprite.setTextureRect(sf::IntRect(currentCol * atlas.tileWidth,
-                                      currentRow * atlas.tileHeight,
-                                      atlas.tileWidth,
-                                      atlas.tileHeight));
+    sprite.setTextureRect(
+      sf::IntRect(0, static_cast<int>(scrollOffset), texSize.x, texSize.y));
 }
 
 void
@@ -103,24 +93,16 @@ Background::changeAtlas(TextureID textureID)
     currentTexture = textureID;
 
     auto& texManager = TextureManager::getInstance();
-    sprite.setTexture(texManager.getTexture(textureID));
-
-    auto& atlas = atlases.at(static_cast<std::size_t>(currentTexture));
-
-    if (!atlas.cols || !atlas.rows)
-        return;
-
-    if (!atlas.tileWidth)
-        atlas.tileWidth = sprite.getTexture()->getSize().x / atlas.cols;
-    if (!atlas.tileHeight)
-        atlas.tileHeight = sprite.getTexture()->getSize().y / atlas.rows;
-
-    sprite.setTextureRect(sf::IntRect(0, 0, atlas.tileWidth, atlas.tileHeight));
+    auto& tex = texManager.getTexture(textureID);
+    const_cast<sf::Texture&>(tex).setRepeated(
+      true); // Enable repeating for scrolling
+    sprite.setTexture(tex);
 
     auto windowSize = WindowManager::getWindow().getSize();
-    sprite.setScale(
-      static_cast<float>(windowSize.x) / sprite.getTextureRect().getSize().x,
-      static_cast<float>(windowSize.y) / sprite.getTextureRect().getSize().y);
+    sprite.setTextureRect(sf::IntRect(0, 0, tex.getSize().x, tex.getSize().y));
+
+    sprite.setScale(static_cast<float>(windowSize.x) / tex.getSize().x,
+                    static_cast<float>(windowSize.y) / tex.getSize().y);
 }
 
 void

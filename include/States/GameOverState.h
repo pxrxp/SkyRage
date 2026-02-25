@@ -10,6 +10,8 @@ class GameOverState : public State
     sf::RectangleShape overlay;
     sf::Text gameOverText;
     sf::Text instructionsText;
+    sf::RectangleShape panel;
+    sf::RectangleShape panelBorder;
     sf::Font font;
     sf::RenderTexture backgroundTexture;
     sf::Sprite backgroundSprite;

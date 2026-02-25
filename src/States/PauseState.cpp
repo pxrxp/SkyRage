@@ -24,7 +24,7 @@ PauseState::init()
     soundManager.pauseSound();
 
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
-    overlay.setFillColor(sf::Color(0, 0, 0, 230));
+    overlay.setFillColor(sf::Color(5, 5, 8, 235)); // Ultra Dark Obsidian
 
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
@@ -40,10 +40,9 @@ PauseState::init()
     instructionsText.setFont(textFont);
     instructionsText.setString(
       "Press Esc to unpause the game\nPress Ctrl+Esc to return to main menu");
-    instructionsText.setCharacterSize(15);
-    instructionsText.setFillColor(sf::Color::White);
-    instructionsText.setPosition(
-      0.0f, windowSize.y - instructionsText.getCharacterSize() * 2);
+    instructionsText.setCharacterSize(28);
+    instructionsText.setFillColor(sf::Color(140, 140, 140));
+    instructionsText.setPosition(60.0f, windowSize.y - 120.0f);
     auto instructionsLocalBounds = instructionsText.getLocalBounds();
 
     eventManager.addListener(
@@ -97,9 +96,13 @@ PauseState::handleEvents(const sf::Event& event)
         case sf::Event::KeyPressed:
             switch (event.key.code) {
                 case sf::Keyboard::Escape:
-                    StateManager::getInstance().popState();
-                    if (event.key.control)
+                    if (event.key.control) {
+                        SoundManager::getInstance().getMusic().stop();
                         StateManager::getInstance().popState();
+                        StateManager::getInstance().popState();
+                    } else {
+                        StateManager::getInstance().popState();
+                    }
                     break;
                 default:
                     break;
