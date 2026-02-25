@@ -8,12 +8,25 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.platform.name }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        platform:
+          - os: ubuntu-latest
+            name: Linux-X11
+            flags: ""
+          - os: ubuntu-latest
+            name: Linux-Wayland
+            flags: "-DSFML_USE_WAYLAND=ON"
+          - os: windows-latest
+            name: Windows
+            flags: ""
+          - os: macos-latest
+            name: macOS
+            flags: ""
+
+    runs-on: ${{ matrix.platform.os }}
 
     steps:
       - name: Checkout code
@@ -28,6 +41,7 @@ jobs:
           sudo apt-get install -y \
             libx11-dev \
             libxrandr-dev \
+            libxinerama-dev \
             libudev-dev \
             libgl1-mesa-dev \
             libglu1-mesa-dev \
@@ -46,19 +60,14 @@ jobs:
             pkg-config
 
       - name: Configure CMake
-        run: |
-          if [ "${{ runner.os }}" == "Linux" ]; then
-            cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release -DSFML_USE_WAYLAND=ON
-          else
-            cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release
-          fi
+        run: cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release ${{ matrix.platform.flags }}
 
       - name: Build
         run: |
           cmake --build build --config Release --parallel 4
 
       - name: Prepare Package (Linux/macOS)
-        if: runner.os != 'Windows'
+        if: matrix.platform.os != 'windows-latest'
         run: |
           mkdir -p release/assets
           if [ -f "build/bin/SkyRage" ]; then
@@ -70,10 +79,10 @@ jobs:
           chmod +x release/SkyRage
           cp -r assets/* release/assets/
           cd release
-          tar -czf ../SkyRage-${{ runner.os }}-${{ github.ref_name }}.tar.gz .
+          tar -czf ../SkyRage-${{ matrix.platform.name }}-${{ github.ref_name }}.tar.gz .
 
       - name: Prepare Package (Windows)
-        if: runner.os == 'Windows'
+        if: matrix.platform.os == 'windows-latest'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path release/assets
@@ -85,12 +94,12 @@ jobs:
             Get-ChildItem -Path build -Filter SkyRage.exe -Recurse | Select-Object -First 1 | Copy-Item -Destination release/
           }
           Copy-Item -Path assets/* -Destination release/assets/ -Recurse
-          Compress-Archive -Path release/* -DestinationPath SkyRage-Windows-${{ github.ref_name }}.zip
+          Compress-Archive -Path release/* -DestinationPath SkyRage-${{ matrix.platform.name }}-${{ github.ref_name }}.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SkyRage-${{ matrix.os }}
+          name: SkyRage-${{ matrix.platform.name }}
           path: |
             *.tar.gz
             *.zip

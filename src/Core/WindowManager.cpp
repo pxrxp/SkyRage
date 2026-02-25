@@ -2,7 +2,7 @@
 #include "Util/Path.h"
 
 namespace {
-const sf::String TITLE = "Race";
+const sf::String TITLE = "Sky Rage";
 const std::string ICON_PATH = Util::getExecutablePath() / "assets/icon.png";
 bool isFullScreen = false;
 }
