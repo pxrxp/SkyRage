@@ -1,5 +1,7 @@
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/44cafe16-bc5c-4e44-aa1d-ab1d8e773e4c" />
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/10399d24-1989-4f96-99dc-16b841060584" />
+<p align="center">
+    <img width="400" alt="Screenshot of Menuscreen" src="https://github.com/user-attachments/assets/44cafe16-bc5c-4e44-aa1d-ab1d8e773e4c" />
+    <img width="400" alt="Screenshot of gameplay" src="https://github.com/user-attachments/assets/10399d24-1989-4f96-99dc-16b841060584" />
+</p>
 
 ---
 
