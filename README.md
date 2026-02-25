@@ -30,7 +30,7 @@ SkyRage/
 ├── assets/           # Textures (.png), Audio (.ogg), and Fonts (.ttf)
 ├── include/          # Header files (.h)
 └── src/              # Source files (.cpp)
-    ├── Components/   # Game entities (PlayerCar, EnemyPlane, Background)
+    ├── Components/   # Game entities (PlayerPlane, EnemyPlane, Background)
     ├── Core/         # Engine singletons (State, Event, Audio, Texture Managers)
     └── States/       # Game screens (Menu, Play, Pause, Settings, Win, GameOver)
 ```
@@ -70,7 +70,7 @@ Movement scaling relies on a delta-time acceleration framework.
 
 ### Collision Precision
 Top-down sprite bounding boxes (`sprite.getGlobalBounds()`) often register intersections on transparent texture regions, specifically wingtips.
-- **Refined Bounds:** `PlayerCar` and `EnemyPlane` apply a 0.7x (70%) uniform scalar reduction to their generated `sf::FloatRect` during collision checks (`intersects()`). This ensures crash conditions are only triggered by central fuselage overlap.
+- **Refined Bounds:** `PlayerPlane` and `EnemyPlane` apply a 0.7x (70%) uniform scalar reduction to their generated `sf::FloatRect` during collision checks (`intersects()`). This ensures crash conditions are only triggered by central fuselage overlap.
 
 ---
 

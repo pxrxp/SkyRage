@@ -29,18 +29,29 @@ jobs:
             libx11-dev \
             libxrandr-dev \
             libudev-dev \
-            libopengl-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libasound2-dev \
             libflac-dev \
+            libogg-dev \
             libvorbis-dev \
             libopenal-dev \
-            libvorbis-dev \
             libxcursor-dev \
             libxi-dev \
-            libfreetype6-dev
+            libfreetype6-dev \
+            libwayland-dev \
+            libwayland-egl-backend-dev \
+            libxkbcommon-dev \
+            wayland-protocols \
+            pkg-config
 
       - name: Configure CMake
         run: |
-          cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release
+          if [ "${{ runner.os }}" == "Linux" ]; then
+            cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release -DSFML_USE_WAYLAND=ON
+          else
+            cmake -B build -DCMAKE_BUILD_VERSION=${{ github.ref_name }} -DCMAKE_BUILD_TYPE=Release
+          fi
 
       - name: Build
         run: |
@@ -50,11 +61,13 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir -p release/assets
-          if [ "${{ runner.os }}" == "macOS" ]; then
+          if [ -f "build/bin/SkyRage" ]; then
             cp build/bin/SkyRage release/
           else
-            cp build/bin/SkyRage release/
+            # Fallback for different output structures
+            find build -name SkyRage -type f -maxdepth 4 -exec cp {} release/ \;
           fi
+          chmod +x release/SkyRage
           cp -r assets/* release/assets/
           cd release
           tar -czf ../SkyRage-${{ runner.os }}-${{ github.ref_name }}.tar.gz .
@@ -64,7 +77,13 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path release/assets
-          Copy-Item -Path build/bin/Release/SkyRage.exe -Destination release/
+          if (Test-Path "build/bin/Release/SkyRage.exe") {
+            Copy-Item -Path build/bin/Release/SkyRage.exe -Destination release/
+          } elseif (Test-Path "build/bin/SkyRage.exe") {
+            Copy-Item -Path build/bin/SkyRage.exe -Destination release/
+          } else {
+            Get-ChildItem -Path build -Filter SkyRage.exe -Recurse | Select-Object -First 1 | Copy-Item -Destination release/
+          }
           Copy-Item -Path assets/* -Destination release/assets/ -Recurse
           Compress-Archive -Path release/* -DestinationPath SkyRage-Windows-${{ github.ref_name }}.zip
 
