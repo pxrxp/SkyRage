@@ -9,14 +9,15 @@
 
 namespace {
 std::string instructionsString =
-  std::string("\n\n1. Use the arrow keys or WASD to navigate your character.\n") +
-  std::string("2. Avoid obstacles to progress through the game.\n") +
-  std::string("3. Press ESC to pause the game.\n") +
-  std::string("4. Keep an eye on the timer located in the top right corner of "
+  std::string(
+    "\n\n1.\t Use the arrow keys or WASD to navigate your character.\n") +
+  std::string("2.\tAvoid obstacles to progress through the game.\n") +
+  std::string("3.\tPress ESC to pause the game.\n") +
+  std::string("4.\tKeep an eye on the timer located in the top right corner of "
               "the screen.\n") +
   std::string(
-    "5. You can switch maps from the settings menu for a new experience.") +
-  std::string("\n\n* Press ESC to exit to main menu.");
+    "5.\tYou can switch maps from the settings menu for a new experience.") +
+  std::string("\n\n*\t Press ESC to exit to main menu.");
 }
 
 HowToPlayState::HowToPlayState()

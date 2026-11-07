@@ -75,13 +75,12 @@ PlayState::init()
     auto& soundManager = SoundManager::getInstance();
     auto& textureManager = TextureManager::getInstance();
 
-    textureManager.loadTexture(
-      TextureID::SKY0, Util::getExecutablePath() / "assets/sky0.jpg");
-    textureManager.loadTexture(
-      TextureID::SKY1, Util::getExecutablePath() / "assets/sky1.jpg");
+    textureManager.loadTexture(TextureID::SKY0,
+                               Util::getExecutablePath() / "assets/sky0.jpg");
+    textureManager.loadTexture(TextureID::SKY1,
+                               Util::getExecutablePath() / "assets/sky1.jpg");
     textureManager.loadTexture(TextureID::SKY2,
-                               Util::getExecutablePath() /
-                                 "assets/sky2.jpg");
+                               Util::getExecutablePath() / "assets/sky2.jpg");
     textureManager.loadTexture(
       TextureID::EXHAUST, Util::getExecutablePath() / "assets/exhaust.png");
     textureManager.loadTexture(TextureID::PLAYER_PLANE,
@@ -318,6 +317,7 @@ PlayState::exit()
     SoundManager::getInstance().clearQueue();
     SoundManager::getInstance().getMusic().stop();
     eventManager.removeAllListeners(StateID::Play, sf::Event::KeyPressed);
+    eventManager.removeAllListeners(StateID::Play, sf::Event::KeyReleased);
     eventManager.removeAllListeners(StateID::Play, sf::Event::Resized);
     eventManager.removeAllListeners(StateID::Play, sf::Event::Closed);
 
@@ -328,8 +328,8 @@ PlayState::exit()
         if (file.is_open()) {
             int minutes = static_cast<int>(playingTime) / 60;
             int seconds = static_cast<int>(playingTime) % 60;
-            file << "Time: " << minutes << ":" << (seconds < 10 ? "0" : "")
-                 << seconds << "\n";
+            file << minutes << " minute" << (minutes > 1 ? "s " : " ")
+                 << seconds << " second" << (seconds > 1 ? "s" : "") << "\n";
             file.close();
         }
     }

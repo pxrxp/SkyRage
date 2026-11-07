@@ -109,7 +109,7 @@ HighScoresState::loadHighScores()
     if (file.is_open()) {
         int count = 0;
         while (std::getline(file, line) && count < 10) {
-            scores += std::to_string(count + 1) + ". " + line + "\n\n";
+            scores += std::to_string(count + 1) + ".\t\t" + line + "\n\n";
             count++;
         }
         file.close();

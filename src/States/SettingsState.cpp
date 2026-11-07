@@ -11,7 +11,7 @@
 
 std::string settingsString =
   std::string("Use arrow keys to cycle environments.\n\n") +
-  std::string("* Current environment: ");
+  std::string("\tCurrent environment:\t");
 
 constexpr int MAX_ATLAS_ID = 2;
 
