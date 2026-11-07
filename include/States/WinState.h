@@ -10,7 +10,6 @@ class WinState : public State
     sf::RectangleShape overlay;
     sf::Text winText;
     sf::Text instructionsText;
-    sf::RectangleShape panel;
     sf::Font font;
     sf::Sprite backgroundSprite;
 

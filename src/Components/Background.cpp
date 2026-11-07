@@ -16,11 +16,11 @@ Background::Background()
 void
 Background::init()
 {
-    atlases.at(static_cast<std::size_t>(TextureID::SKY_DAY)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY0)) =
       Atlas(5, 11, 55, 100.0);
-    atlases.at(static_cast<std::size_t>(TextureID::SKY_NIGHT)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY1)) =
       Atlas(4, 6, 23, 2.0);
-    atlases.at(static_cast<std::size_t>(TextureID::SKY_SUNSET)) =
+    atlases.at(static_cast<std::size_t>(TextureID::SKY2)) =
       Atlas(4, 6, 23, 500.0);
 
     changeAtlas(currentTexture);

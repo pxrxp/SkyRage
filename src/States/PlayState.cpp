@@ -76,12 +76,12 @@ PlayState::init()
     auto& textureManager = TextureManager::getInstance();
 
     textureManager.loadTexture(
-      TextureID::SKY_DAY, Util::getExecutablePath() / "assets/sky_day.png");
+      TextureID::SKY0, Util::getExecutablePath() / "assets/sky0.jpg");
     textureManager.loadTexture(
-      TextureID::SKY_NIGHT, Util::getExecutablePath() / "assets/sky_night.png");
-    textureManager.loadTexture(TextureID::SKY_SUNSET,
+      TextureID::SKY1, Util::getExecutablePath() / "assets/sky1.jpg");
+    textureManager.loadTexture(TextureID::SKY2,
                                Util::getExecutablePath() /
-                                 "assets/sky_evening.png");
+                                 "assets/sky2.jpg");
     textureManager.loadTexture(
       TextureID::EXHAUST, Util::getExecutablePath() / "assets/exhaust.png");
     textureManager.loadTexture(TextureID::PLAYER_PLANE,

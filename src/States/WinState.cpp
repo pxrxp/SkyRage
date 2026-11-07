@@ -27,13 +27,6 @@ WinState::init()
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
-    panel.setSize(sf::Vector2f(700, 450));
-    panel.setFillColor(sf::Color(8, 9, 10, 250));
-    panel.setOutlineThickness(1);
-    panel.setOutlineColor(sf::Color(60, 70, 80));
-    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
-    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
-
     winText.setFont(font);
     winText.setString("MISSION\nACCOMPLISHED");
     winText.setCharacterSize(60);
@@ -76,7 +69,6 @@ WinState::render(sf::RenderTarget& target)
     sf::Sprite snapshotSprite(snapshot.getTexture());
     target.draw(snapshotSprite);
     target.draw(overlay);
-    target.draw(panel);
     target.draw(winText);
     target.draw(instructionsText);
 }

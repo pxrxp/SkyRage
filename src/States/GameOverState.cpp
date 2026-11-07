@@ -27,15 +27,8 @@ GameOverState::init()
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
-    panel.setSize(sf::Vector2f(700, 450));
-    panel.setFillColor(sf::Color(8, 9, 10, 250));  
-    panel.setOutlineThickness(1);
-    panel.setOutlineColor(sf::Color(60, 70, 80));
-    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
-    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
-
     gameOverText.setFont(font);
-    gameOverText.setString("MISSION\nTERMINATED");
+    gameOverText.setString("Game\nOver");
     gameOverText.setCharacterSize(55);
     gameOverText.setFillColor(sf::Color::White);
     gameOverText.setLineSpacing(1.1f);
@@ -45,7 +38,7 @@ GameOverState::init()
     gameOverText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 40);
 
     instructionsText.setFont(textFont);
-    instructionsText.setString("PRESS ESC TO RETURN TO HQ");
+    instructionsText.setString("Press ESC to return to main menu.");
     instructionsText.setCharacterSize(28);
     instructionsText.setFillColor(sf::Color(140, 140, 140));
     auto instrBounds = instructionsText.getLocalBounds();
@@ -76,7 +69,6 @@ GameOverState::render(sf::RenderTarget& target)
     sf::Sprite snapshotSprite(snapshot.getTexture());
     target.draw(snapshotSprite);
     target.draw(overlay);
-    target.draw(panel);
     target.draw(gameOverText);
     target.draw(instructionsText);
 }

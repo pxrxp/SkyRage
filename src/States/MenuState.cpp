@@ -59,7 +59,7 @@ MenuState::init()
 
     auto& font = fontManager.getFont(FontID::TITLE);
     title.setFont(font);
-    title.setString("SKY RAGE");
+    title.setString("Sky Rage");
     title.setCharacterSize(140);
     title.setFillColor(sf::Color::White);
     title.setPosition(windowSize.x / 2.0f, windowSize.y / 4.0f);
@@ -73,7 +73,7 @@ MenuState::init()
     }
 
     std::vector<std::string> buttonLabels = {
-        "START MISSION", "FLIGHT MANUAL", "TOP ACES", "OPTIONS"
+        "Play", "How to Play", "Leaderboard", "Settings"
     };
     for (size_t i = 0; i < buttonLabels.size(); ++i) {
         sf::Text buttonText;

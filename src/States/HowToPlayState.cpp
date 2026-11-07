@@ -9,8 +9,7 @@
 
 namespace {
 std::string instructionsString =
-  std::string("Instructions:\n\n") +
-  std::string("1. Use the arrow keys or WASD to navigate your character.\n") +
+  std::string("\n\n1. Use the arrow keys or WASD to navigate your character.\n") +
   std::string("2. Avoid obstacles to progress through the game.\n") +
   std::string("3. Press ESC to pause the game.\n") +
   std::string("4. Keep an eye on the timer located in the top right corner of "
@@ -41,9 +40,19 @@ HowToPlayState::init()
     overlay.setSize(sf::Vector2f(windowSize.x, windowSize.y));
     overlay.setFillColor(sf::Color(0, 0, 0, 230));
 
-    auto& font = FontManager::getInstance().getFont(FontID::TEXT);
+    auto& font = FontManager::getInstance().getFont(FontID::FANCY);
+    auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
-    instructionsText.setFont(font);
+    title.setFont(font);
+    title.setString("How to Play");
+    title.setCharacterSize(50);
+    title.setFillColor(sf::Color::White);
+    title.setOrigin(
+      title.getLocalBounds().left + title.getLocalBounds().width / 2.0f,
+      title.getLocalBounds().top + title.getLocalBounds().height / 2.0f);
+    title.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 140);
+
+    instructionsText.setFont(textFont);
     instructionsText.setString(instructionsString);
     instructionsText.setCharacterSize(30);
     instructionsText.setFillColor(sf::Color::White);
@@ -75,6 +84,7 @@ HowToPlayState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(overlay);
+    target.draw(title);
     target.draw(instructionsText);
 }
 

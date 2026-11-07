@@ -16,6 +16,7 @@ class HowToPlayState : public State
   private:
     void handleEvents(const sf::Event& event) override;
     sf::Sprite background;
+    sf::Text title;
     sf::RectangleShape overlay;
     sf::Text instructionsText;
 };

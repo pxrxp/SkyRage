@@ -32,15 +32,8 @@ HighScoresState::init()
     auto& font = FontManager::getInstance().getFont(FontID::FANCY);
     auto& textFont = FontManager::getInstance().getFont(FontID::TEXT);
 
-    panel.setSize(sf::Vector2f(600, 600));
-    panel.setFillColor(sf::Color(20, 20, 20, 240));
-    panel.setOutlineThickness(1);
-    panel.setOutlineColor(sf::Color(112, 128, 144));
-    panel.setOrigin(panel.getSize().x / 2.0f, panel.getSize().y / 2.0f);
-    panel.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
-
     title.setFont(font);
-    title.setString("HALL OF FAME");
+    title.setString("Leaderboard");
     title.setCharacterSize(50);
     title.setFillColor(sf::Color::White);
     title.setOrigin(title.getLocalBounds().width / 2.0f,
@@ -48,7 +41,7 @@ HighScoresState::init()
     title.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 240);
 
     highScoresText.setFont(textFont);
-    highScoresText.setCharacterSize(22);
+    highScoresText.setCharacterSize(30);
     highScoresText.setFillColor(sf::Color(180, 180, 180));
     highScoresText.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f);
 
@@ -77,7 +70,6 @@ HighScoresState::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(overlay);
-    target.draw(panel);
     target.draw(title);
     target.draw(highScoresText);
 }

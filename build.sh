@@ -3,10 +3,6 @@
 # Exit on any error
 set -e
 
-echo "=================================="
-echo "    SKY RAGE - LINUX BUILDER      "
-echo "=================================="
-
 # Check for cmake
 if ! command -v cmake &> /dev/null; then
     echo "Error: CMake is not installed."
@@ -26,8 +22,5 @@ echo "[3/3] Compiling Project (using all available cores)..."
 CORES=$(nproc 2>/dev/null || echo 4)
 make -j$CORES
 
-echo "=================================="
-echo " BUILD SUCCESSFUL!                "
 echo " You can launch the game via:     "
 echo " ./build/bin/SkyRage             "
-echo "=================================="

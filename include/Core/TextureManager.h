@@ -8,9 +8,9 @@
 
 enum class TextureID
 {
-    SKY_DAY,
-    SKY_NIGHT,
-    SKY_SUNSET,
+    SKY0,
+    SKY1,
+    SKY2,
     ENEMY_PLANE,
     PLAYER_PLANE,
     EXHAUST,

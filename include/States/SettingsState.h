@@ -19,7 +19,6 @@ class SettingsState : public State
     sf::Sprite background;
     sf::RectangleShape overlay;
     void handleEvents(const sf::Event& event) override;
-    sf::RectangleShape panel;
     sf::Text title;
     sf::Text settingsText;
 
